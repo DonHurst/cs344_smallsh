@@ -130,63 +130,43 @@ struct command *getCommand() {
 
 void expand(struct command *currCommand, int pidnum) {
 
+    // Variables to help with the expansion
     char temp;
     char nextTemp;
     char newString[MAX_ARGS];
     char pidString[MAX_ARGS];
     int signsFound;
 
+    // Create a string of the pid number for appending
     sprintf(pidString, "%d", pidnum);
-
-    printf("The PID - %s\n", pidString);
-
-            // temp = token[i];
-            // nextTemp = token[i]+1;
-            
-
-            // printf("The Character - %c\n", temp);
-            // printf("The Next Character - %c\n\n", temp);
-            
-            // printf("Token - %c", token[i]);
-            // if ((strcmp(temp,"$") == 0) && strcmp(temp, "$") == 0) {
-            //     printf("In here!");
-            //     strcat(newString, pidString);
-            //     i += 1;
-            // }
-            // else {
-            //     strcat(newString, &temp[i]);
-            // }
-
 
     // Tokenize commands string and iterate over it
     char* token = strtok(currCommand->commandList, " ");
     while (token) {
-        printf("The token! - %s\n", token);
+
         // Loop over the string
         for (int i = 0; i < strlen(token); i++) {
+            // Set the temp value to the current char and reset the signs found value
             temp = token[i];
             signsFound = 0;
 
             // Nested loop over the string again
             for(int j = 1; j < strlen(token); j++) {
+                // Set the next temp value to the current character in the inner loop
                 nextTemp = token[j];
 
-                // If 
+                // If the current and next value are both $, mark the signs found variable
                 if ((temp == '$') && (nextTemp == '$') && (j-i == 1)) {
                     signsFound = 1;
                 }
-
-                // printf("the temp - %c\n", temp);
-                // printf("the next temp - %c\n", nextTemp);
-                // If the current and next value are both $'s, replace with the pid
-                // if ((token[i] == "$") && (strcmp(token[j], "$")) && (j-i == 1)){
-                //     printf("They MAtch!");
-                // }
             }
+            // If we've found a pair of signs, replace with the pidString and advance the iterator
             if (signsFound == 1) {
                 strcat(newString, pidString);
                 i += 1;
             }
+
+            // If not, just add the current character to our string
             else {
                 strncat(newString, &token[i], 1);
             }
@@ -198,8 +178,6 @@ void expand(struct command *currCommand, int pidnum) {
     }
 
     printf("The New String - %s", newString);
-
-    // printf("\n The Temp - %s", temp);
 
 }
 
