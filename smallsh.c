@@ -118,7 +118,6 @@ struct command *getCommand() {
 
         
 
-        // printf("Token: %s\n", token);
         
     }
 
@@ -173,9 +172,17 @@ void expand(struct command *currCommand, int pidnum) {
             
             
         }
+
+        
+        
         // Advance to next command
         token = strtok(NULL, " ");
     }
+
+    // Copy the newly created string commands to the structure
+    strcpy(currCommand->commandList, newString);
+
+    printf("\nRight here - %s\n", currCommand->commandList);
 
     printf("The New String - %s", newString);
 
@@ -188,11 +195,12 @@ int main() {
     printf("%d", getpid());
     // do {
 
+    // Instantiate a new struct and get the input from the user
     struct command *newCommand = getCommand();
-    // printf("inFile - %s\noutFile - %s\nCommands -  %s\nBackgroundStatus - %d", newCommand->inputFile, newCommand->outputFile, newCommand->commandList, newCommand->backgroundStatus);
-    // i++;
-    // } while(i < 5);
+
     printf("\n The PID - %d", getpid());
+
+    // Expand any commands in the structure 
     expand(newCommand, getpid());
 }
 
