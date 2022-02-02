@@ -174,42 +174,6 @@ void expand(struct command *currCommand, int pidnum) {
 
 }
 
-/********************************************************************************
-
-
-********************************************************************************/
-void otherCommands(struct command *currCommand) {
-
-    // The fork code below is adapted directly from the example code in our explorations
-    // Found here: https://replit.com/@cs344/4forkexamplec#main.c
-
-    // Fork the process to create a child process
-    
-    spawnpid = fork();
-
-    switch(spawnpid) {
-        
-        // If there is an error forking, print message and set exit status to 1
-        case -1:
-            perror("fork() failed!");
-            exit(1);
-            break;
-
-        // If the fork executed properly (Child)
-        case 0:
-            
-            executeCommand(currCommand);
-            break;
-
-        // IF we are in the parent
-        default:
-
-            break;
-
-    }
-
-}
-
 void executeCommand(struct command *currCommand) {
 
     // Set variable for file descriptor
@@ -275,6 +239,44 @@ void executeCommand(struct command *currCommand) {
 
     }
 }
+
+/********************************************************************************
+
+
+********************************************************************************/
+void otherCommands(struct command *currCommand) {
+
+    // The fork code below is adapted directly from the example code in our explorations
+    // Found here: https://replit.com/@cs344/4forkexamplec#main.c
+
+    // Fork the process to create a child process
+    
+    spawnpid = fork();
+
+    switch(spawnpid) {
+        
+        // If there is an error forking, print message and set exit status to 1
+        case -1:
+            perror("fork() failed!");
+            exit(1);
+            break;
+
+        // If the fork executed properly (Child)
+        case 0:
+            
+            executeCommand(currCommand);
+            break;
+
+        // IF we are in the parent
+        default:
+
+            break;
+
+    }
+
+}
+
+
 /********************************************************************************
 The handler functions below are adapted from the reading in the below:
 https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
