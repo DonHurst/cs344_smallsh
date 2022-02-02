@@ -198,7 +198,7 @@ void otherCommands(struct command *currCommand) {
         // If the fork executed properly (Child)
         case 0:
             
-            executeCommands(currCommand);
+            executeCommand(currCommand);
             break;
 
         // IF we are in the parent
@@ -268,9 +268,9 @@ void executeCommand(struct command *currCommand) {
             
         }
 
-        execlp(commands[0], commands);
+        execvp(commands[0], commands);
         close(file_descriptor);
-        redirect == false;
+        redirect = false;
         std = 2;
 
     }
