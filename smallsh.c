@@ -104,7 +104,10 @@ struct command *getCommand() {
     return currCommand;
 }
 
+/********************************************************************************
 
+
+********************************************************************************/
 void expand(struct command *currCommand, int pidnum) {
 
     // Variables to help with the expansion
@@ -167,6 +170,41 @@ void expand(struct command *currCommand, int pidnum) {
 
 }
 
+/********************************************************************************
+
+
+********************************************************************************/
+void otherCommands() {
+
+    // The fork code below is adapted directly from the example code in our explorations
+    // Found here: https://replit.com/@cs344/4forkexamplec#main.c
+
+    // Fork the process to create a child process
+    pid_t spawnpid = -5;
+    spawnpid = fork();
+
+    switch(spawnpid) {
+        
+        // If there is an error forking, print message and set exit status to 1
+        case -1:
+            perror("fork() failed!");
+            exit(1);
+            break;
+
+        // If the fork executed properly (Child)
+        case 0:
+            
+            break;
+
+        // IF we are in the parent
+        default:
+
+            break;
+
+    }
+
+}
+
 
 int main() {
 
@@ -223,6 +261,11 @@ int main() {
                 // printf("Exit value %d\n", statusCode);
                 printf("In status");
                 fflush(stdout);
+            }
+
+            // If it's any other command
+            else {
+
             }
 
             // Advance to next command
