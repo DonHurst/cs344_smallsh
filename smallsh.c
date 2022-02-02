@@ -5,9 +5,13 @@
 #include <string.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 #define MAX_LENGTH 2048
 #define MAX_ARGS 256
+
+// Global Variables
+pid_t spawnpid = -5;
 
 
 /********************************************************************************
@@ -174,13 +178,13 @@ void expand(struct command *currCommand, int pidnum) {
 
 
 ********************************************************************************/
-void otherCommands() {
+void otherCommands(struct command *currCommand) {
 
     // The fork code below is adapted directly from the example code in our explorations
     // Found here: https://replit.com/@cs344/4forkexamplec#main.c
 
     // Fork the process to create a child process
-    pid_t spawnpid = -5;
+    
     spawnpid = fork();
 
     switch(spawnpid) {
@@ -194,6 +198,7 @@ void otherCommands() {
         // If the fork executed properly (Child)
         case 0:
             
+            executeCommands(currCommand);
             break;
 
         // IF we are in the parent
@@ -205,8 +210,103 @@ void otherCommands() {
 
 }
 
+void executeCommand(struct command *currCommand) {
+
+    // Set variable for file descriptor
+    int file_descriptor;
+    bool redirect = false;
+    int std = 2;
+    char* commands[MAX_ARGS];
+    int counter = 0;
+
+    char* token = strtok(currCommand->commandList, " ");
+
+    while(token) {
+        // Set first command in the list to the token & update counter
+        commands[counter] = token;
+        counter += 1;
+
+        // Move to next token
+        strtok(NULL, " ");
+
+    }
+
+    while (counter >= 0) {
+
+        // If there is an input file (< redirect was present)
+        if (currCommand->inputFile != NULL) {
+            file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
+            // IF it opens
+            if (file_descriptor) {
+                redirect = true;
+                std = 0;
+            }
+            // If it cannot open
+            else {
+                printf("Cannot open %s input file\n", currCommand->inputFile);
+                fflush(stdout);
+                exit(1);
+            }
+
+        }
+
+        // If there is an output file (> redirect was present)
+        else if (currCommand->outputFile != NULL) {
+            file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0);
+            if (file_descriptor) {
+                redirect = true;
+                std = 1;
+            }
+            // If it cannot open
+            else {
+                printf("Cannot open %s input file\n", currCommand->inputFile);
+            }
+        }
+
+        if (redirect == true) {
+            dup2(file_descriptor, std);
+            
+        }
+
+        execlp(commands[0], commands);
+        close(file_descriptor);
+        redirect == false;
+        std = 2;
+
+    }
+}
+/********************************************************************************
+The handler functions below are adapted from the reading in the below:
+https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
+********************************************************************************/
+void handle_SIGINT(int signo) {
+    printf("terminated by %d\n", signo);
+    fflush(stdout);
+}
+
+/********************************************************************************
+The handler functions below are adapted from the reading in the below:
+https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
+********************************************************************************/
+// void handle_SIGTSTP(int signo) {
+//     if() {
+
+//     }
+//     else {
+
+//     }
+
+// }
+
 
 int main() {
+
+    // Sigint initialization
+    struct sigaction SIGINT_action = {0};
+    struct sigaction SIGTSTP_action = {0};
+
+
+
 
     // Set a variable for the exit status
     int exitStatus = 0;
@@ -265,6 +365,7 @@ int main() {
 
             // If it's any other command
             else {
+                otherCommands(newCommand);
 
             }
 
