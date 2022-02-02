@@ -65,67 +65,45 @@ struct command *getCommand() {
         return NULL;
     }
 
-    // printf("You typed: %s\n", args);
-
     // The following code for tokenizing the individual strings is adapted from a stackoverflow thread 
     // located here: https://stackoverflow.com/questions/266357/tokenizing-strings-in-c
     char* token = strtok(args, " ");
     while (token) {
 
-        printf("Token: %s\n", token);
-
-        // // If the token is <
+        // // If the token is <, set value to inputFile
         if (strcmp(token, "<") == 0) {
-            printf("PRE - %s\n", token);
             token = strtok(NULL, " ");
-            printf("POST - %s\n", token);
             currCommand->inputFile = calloc(strlen(token) + 1, sizeof(char));
             strcpy(currCommand->inputFile, token);
         }
 
 
-        // // If the token is >
+        // If the token is >, set value to outputFile
         else if (strcmp(token, ">") == 0) {
             token = strtok(NULL, " ");
             currCommand->outputFile = calloc(strlen(token) + 1, sizeof(char));
             strcpy(currCommand->outputFile, token);
         }
 
+        // If the token is a &, set the flag to indicate as such
         else if (strcmp(token, "&") == 0) {
             token = strtok(NULL, " ");
             currCommand->backgroundStatus = 1;
             continue;
         }
-        
-        // // IF the token is &
-        // else if (!strcmp(token, "&")) {
-        //     continue;
-        // }
 
-        // If the token is a command
+        // If the token is a command, add it to command list
         else {
-            printf("PRE - %s\n", token);
-            // strcpy(currCommand->commandList, token);
             strcat(currCommand->commandList, token);
             strcat(currCommand->commandList, " ");
-            // token = strtok(NULL, " ");
-            printf("POST - %s\n", token);
-            // currCommand->outputFile = calloc(strlen(token) + 1, sizeof(char));
             
         }
-
-        token = strtok(NULL, " ");
-
-        
-
-        
+        // Advance to the next token
+        token = strtok(NULL, " ");         
     }
-
-    // printf("inFile - %s\noutFile - %s\nCommands -  %s\nBackgroundStatus - %d", currCommand->inputFile, currCommand->outputFile, currCommand->commandList, currCommand->backgroundStatus);
-
     return currCommand;
-
 }
+
 
 void expand(struct command *currCommand, int pidnum) {
 
@@ -173,8 +151,9 @@ void expand(struct command *currCommand, int pidnum) {
             
         }
 
-        
-        
+        // Concatenate an empty space to break up the commands
+        strcat(newString, " ");
+
         // Advance to next command
         token = strtok(NULL, " ");
     }
@@ -188,20 +167,69 @@ void expand(struct command *currCommand, int pidnum) {
 
 }
 
+
 int main() {
 
-    // int i = 0;
+    // Set a variable for the exit status
+    int exitStatus = 0;
+    char cwd[MAX_LENGTH];
 
-    printf("%d", getpid());
-    // do {
+    do {
 
-    // Instantiate a new struct and get the input from the user
-    struct command *newCommand = getCommand();
+        // Instantiate a new struct and get the input from the user
+        struct command *newCommand = getCommand();
 
-    printf("\n The PID - %d", getpid());
+        // If the command is NULL (a # was entered), go to next line
+        if (newCommand == NULL) {
+            continue;
+        }
 
-    // Expand any commands in the structure 
-    expand(newCommand, getpid());
+        // Expands any commands with $$
+        expand(newCommand, getpid());
+
+        // Tokenize our commands
+        char* token = strtok(newCommand->commandList, " ");
+        while (token) {
+
+            // If the token says exit, mark indicator flag for exit
+            if (strcmp(token, "exit") == 0) {
+                exitStatus = 1;
+                break;
+            }
+
+            // If the token says cd
+            else if (strcmp(token, "cd") == 0) {
+
+                printf("\nCurrent Dir (before change) is - %s",getcwd(cwd, sizeof(cwd)));
+                
+                // Advance to the next token
+                token = strtok(NULL, " ");
+
+                // If there is no argument
+                if (token == NULL) {
+                    chdir(getenv("HOME"));
+                    printf("\nCurrent Dir (after change w/ no args) is - %s",getcwd(cwd, sizeof(cwd)));
+                }
+
+                // If there is an argument
+                else {
+                    chdir(token);
+                    printf("\nCurrent Dir (after change w/ args) is - %s",getcwd(cwd, sizeof(cwd)));
+                }
+            }
+
+            // If the token says status
+            else if (strcmp(token, "status") == 0) {
+                // printf("Exit value %d\n", statusCode);
+                printf("In status");
+                fflush(stdout);
+            }
+
+            // Advance to next command
+            token = strtok(NULL, " ");
+        }
+
+    }while (exitStatus != 1);
 }
 
 
