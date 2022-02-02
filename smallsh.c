@@ -12,6 +12,7 @@
 
 // Global Variables
 pid_t spawnpid = -5;
+int childExitMethod;
 
 
 /********************************************************************************
@@ -270,7 +271,8 @@ void otherCommands(struct command *currCommand) {
 
         // IF we are in the parent
         default:
-            printf("Still in parent");
+        waitpid(spawnpid, &childExitMethod, 0);
+            printf("Now in parent");
             break;
 
     }
