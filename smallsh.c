@@ -282,6 +282,8 @@ void otherCommands(struct command *currCommand) {
 
     }
 
+    printf("Leaving now!");
+
 }
 
 
