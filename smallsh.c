@@ -273,7 +273,7 @@ void otherCommands(struct command *currCommand) {
 
         // IF we are in the parent
         default:
-        waitpid(spawnpid, &childExitMethod, 0);
+            waitpid(spawnpid, &childExitMethod, WNOHANG);
             printf("Now in parent");
             break;
 
