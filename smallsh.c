@@ -239,8 +239,11 @@ void executeCommand(struct command *currCommand) {
         close(file_descriptor);
         redirect = false;
         std = 2;
+        
 
     }
+    printf("Finished in the execute command\n");
+    fflush(stdout);
 }
 
 /********************************************************************************
