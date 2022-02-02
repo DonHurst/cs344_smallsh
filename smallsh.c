@@ -252,6 +252,7 @@ void otherCommands(struct command *currCommand) {
     // Fork the process to create a child process
     
     spawnpid = fork();
+    printf("\nSpawned new PID!: %di\n", spawnpid);
 
     switch(spawnpid) {
         
@@ -263,13 +264,13 @@ void otherCommands(struct command *currCommand) {
 
         // If the fork executed properly (Child)
         case 0:
-            
+            printf("Successfully Entered Child");
             executeCommand(currCommand);
             break;
 
         // IF we are in the parent
         default:
-
+            printf("Still in parent");
             break;
 
     }
