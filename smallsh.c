@@ -268,6 +268,7 @@ void executeCommand(struct command *currCommand) {
     }
 
     else {
+        printf("\n**Redirect not true**\n");
         execvp(commands[0], commands);
     }
 
