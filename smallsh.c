@@ -231,7 +231,7 @@ void executeCommand(struct command *currCommand) {
     if (currCommand->inputFile != NULL) {
         
         // Attempt to open the file
-        source_file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
+        source_file_descriptor = open(currCommand->inputFile, O_RDONLY);
        // If we cannot open the input file
         if (source_file_descriptor == -1) {
             printf("Error opening the file - %s", currCommand->inputFile);
@@ -240,7 +240,6 @@ void executeCommand(struct command *currCommand) {
         }
         else {
             result = dup2(source_file_descriptor, 0);
-            fcntl(result, F_SETFD, FD_CLOEXEC);
         }
 
     }
@@ -256,14 +255,20 @@ void executeCommand(struct command *currCommand) {
         }
         else {
             result = dup2(target_file_descriptor, 1);
-            fcntl(result, F_SETFD, FD_CLOEXEC);
         }
         
     }
 
-    execvp(commands[0], commands);
 
-    fflush(stdout);
+
+    execvp(commands[0], commands);
+    close(source_file_descriptor);
+    close(source_file_descriptor);
+
+
+    
+printf("Finished in the execute command\n");
+fflush(stdout);
 }
 
 // }
