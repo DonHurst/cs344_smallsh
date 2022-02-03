@@ -276,7 +276,7 @@ void otherCommands(struct command *currCommand) {
 
         // IF we are in the parent
         default:
-            waitpid(spawnpid, &childExitMethod, WNOHANG);
+            waitpid(spawnpid, &childExitMethod, 0);
             printf("Now in parent");
             break;
 
@@ -316,6 +316,8 @@ int main() {
     // Sigint initialization
     struct sigaction SIGINT_action = {0};
     struct sigaction SIGTSTP_action = {0};
+
+    printf("In main!");
 
 
 
