@@ -230,6 +230,7 @@ void executeCommand(struct command *currCommand) {
 
     while (command_counter >= 0) {
 
+        printf("\nCommand Counter - %d\n", command_counter);
         // If there is an input file (< redirect was present)
         if (currCommand->inputFile != NULL) {
             file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
