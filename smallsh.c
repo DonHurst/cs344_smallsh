@@ -197,7 +197,7 @@ void executeCommand(struct command *currCommand) {
     int std = 2;
     char* commands[MAX_ARGS];
     int iterator = 0;
-    int command_counter = 0;
+    int command_counter = 1;
     int result;
 
     printf("\nCURRENT COMMAND INFORMATION -\n");
