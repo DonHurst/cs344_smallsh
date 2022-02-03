@@ -46,8 +46,6 @@ struct command *getCommand() {
 
     // Allocate memory for the command
 
-    fflush(stdin);
-    fflush(stdout);
     struct command *currCommand = malloc(sizeof(struct command));  
     currCommand->commandList = malloc(sizeof(char) * MAX_LENGTH);
 
