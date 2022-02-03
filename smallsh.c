@@ -210,7 +210,7 @@ void executeCommand(struct command *currCommand) {
         // Set first command in the list to the token & update counter
 
         printf("Token - %s", token);
-        commands[counter] = token;
+        // commands[counter] = token;
         counter += 1;
 
         // Advance to next command
@@ -254,8 +254,8 @@ void executeCommand(struct command *currCommand) {
             
         }
 
-        printf("Commands list command - %s\n", commands[0]);
-        execvp(commands[0], commands);
+        // printf("Commands list command - %s\n", commands[0]);
+        // execvp(commands[0], commands);
         close(file_descriptor);
         redirect = false;
         std = 2;
