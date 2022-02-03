@@ -46,6 +46,7 @@ struct command *getCommand() {
 
     // Allocate memory for the command
 
+    fflush(stdout);
     struct command *currCommand = malloc(sizeof(struct command));  
     currCommand->commandList = malloc(sizeof(char) * MAX_LENGTH);
 
@@ -65,6 +66,7 @@ struct command *getCommand() {
     size_t length = 2048;
     
     // Get actual input from the user
+    getchar();
     getline(&args, &length, stdin);
 
     // Remove newline
@@ -367,7 +369,6 @@ int main() {
     // Set a variable for the exit status
     int exitStatus = 0;
     char cwd[MAX_LENGTH];
-    struct command *newCommand; 
 
     do {
 
@@ -377,7 +378,7 @@ int main() {
 
 
         // Instantiate a new struct and get the input from the user
-        newCommand = getCommand();
+        struct command *newCommand = getCommand();
 
 
         // If the command is NULL (a # was entered), go to next line
