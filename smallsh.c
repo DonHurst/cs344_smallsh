@@ -290,6 +290,7 @@ void otherCommands(struct command *currCommand) {
             // Parent waits for child process to finish first
             waitpid(spawnpid, &childStatus, 0);
 
+            printf("Successfully Entered Parent\n");
             // If child exited normally
             if(WIFEXITED(childStatus)) {
                 // Set status code to the return value from the child with WEXITSTATUS
@@ -399,9 +400,12 @@ int main() {
             // If it's any other command
             else {
 
-                printf("TEsting command prints\n");
+                printf("--------------------------------------\n");
+                printf("Testing command prints in main\n");
                 printf("Commands - %s", newCommand->commandList);
                 printf("\nInputFile - %s", newCommand->inputFile);
+                printf("\noutPutFile - %s", newCommand->outputFile);
+                printf("--------------------------------------\n");
                 otherCommands(newCommand);
 
             }
