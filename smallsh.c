@@ -196,8 +196,7 @@ void executeCommand(struct command *currCommand) {
     bool redirectOUT = false;
     int std = 2;
     char* commands[MAX_ARGS];
-    int iterator = 0;
-    int command_counter = 1;
+    int command_counter = 0;
     int result;
 
     printf("\nCURRENT COMMAND INFORMATION -\n");
@@ -229,7 +228,7 @@ void executeCommand(struct command *currCommand) {
         token = strtok(NULL, " ");
     }
 
-    while (iterator != command_counter) {
+    while (command_counter >= 0) {
 
         // If there is an input file (< redirect was present)
         if (currCommand->inputFile != NULL) {
@@ -278,7 +277,7 @@ void executeCommand(struct command *currCommand) {
         redirectIN = false;
         redirectOUT = false;
         std = 2;
-        iterator += 1;
+        command_counter -= 1;
         
 
     }
