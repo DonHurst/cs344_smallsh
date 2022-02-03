@@ -190,7 +190,7 @@ void executeCommand(struct command *currCommand) {
     int file_descriptor;
     bool redirect = false;
     int std = 2;
-    char* commands[MAX_ARGS];
+    // char* commands[MAX_ARGS];
     int counter = 0;
 
     printf("\nCURRENT COMMAND INFORMATION -\n");
