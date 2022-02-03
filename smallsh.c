@@ -207,7 +207,7 @@ void executeCommand(struct command *currCommand) {
     while(token) {
         // Set first command in the list to the token & update counter
 
-        printf("Token - %s", token);
+        // printf("Token - %s", token);
         commands[counter] = token;
         counter += 1;
 
@@ -370,6 +370,7 @@ int main() {
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
 
+
         // If the command is NULL (a # was entered), go to next line
         if (newCommand == NULL) {
             continue;
@@ -377,6 +378,9 @@ int main() {
 
         // Expands any commands with $$
         expand(newCommand, getpid());
+
+        char commandString[MAX_ARGS]; 
+        strcpy(commandString, newCommand->commandList);
 
         // Tokenize our commands
         char* token = strtok(newCommand->commandList, " ");
@@ -421,7 +425,7 @@ int main() {
 
                 printf("--------------------------------------\n");
                 printf("Testing command prints in main\n");
-                printf("Commands - %s", newCommand->commandList);
+                printf("Commands - %s", commandString);
                 printf("\nInputFile - %s", newCommand->inputFile);
                 printf("\noutPutFile - %s", newCommand->outputFile);
                 printf("\n--------------------------------------\n");

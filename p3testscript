@@ -36,8 +36,7 @@ echo --------------------
 echo wc in junk out junk2; cat junk2 (10 points for returning correct numbers from wc)
 wc < junk > junk2
 cat junk2
-echo
-echo
+echecho
 echo --------------------
 echo test -f badfile (10 points for returning error value of 1, note extraneous &)
 test -f badfile
