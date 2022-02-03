@@ -233,15 +233,15 @@ void executeCommand(struct command *currCommand) {
             file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
             // If it opens
             if (file_descriptor < 0) {
-                printf("\nFile opened!\n");
-                redirect = true;
-                std = 0;
-            }
-            // If it cannot open the file
-            else {
                 printf("Cannot open %s input file\n", currCommand->inputFile);
                 fflush(stdout);
                 exit(1);
+            }
+            // If it cannot open the file
+            else {
+                printf("\nFile opened!\n");
+                redirect = true;
+                std = 0;
             }
 
         }
