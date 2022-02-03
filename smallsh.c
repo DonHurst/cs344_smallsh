@@ -218,8 +218,6 @@ void executeCommand(struct command *currCommand) {
         token = strtok(NULL, " ");
     }
 
-    printf("HELLO!");
-
     while (counter >= 0) {
 
         // If there is an input file (< redirect was present)
@@ -262,6 +260,7 @@ void executeCommand(struct command *currCommand) {
         close(file_descriptor);
         redirect = false;
         std = 2;
+        counter -= 1;
         
 
     }
