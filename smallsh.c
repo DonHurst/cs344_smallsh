@@ -193,7 +193,7 @@ void executeCommand(struct command *currCommand) {
     // Set variable for file descriptor
     int file_descriptor;
     bool redirect = false;
-    int std = 2;
+    int dup_value = 2;
     char* commands[MAX_ARGS];
     int counter = 0;
     int result;
@@ -241,43 +241,36 @@ void executeCommand(struct command *currCommand) {
             else {
                 printf("\nFile opened!\n");
                 redirect = true;
-                std = 0;
+                dup_value = 0;
             }
 
         }
 
         // If there is an output file (> redirect was present)
         else if (currCommand->outputFile != NULL) {
-            file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
-            if (file_descriptor) {
-                redirect = true;
-                std = 1;
-            }
-            // If it cannot open
-            else {
-                printf("Cannot open %s input file\n", currCommand->inputFile);
-            }
-        }
-
-        if (redirect == true) {
-            result = dup2(file_descriptor, std);
             
+            // Open or create output file
+            file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
+            
+            // Flag redirect as true
+            redirect = true;
+
+            // Set value for dup2 function
+            dup_value = 1;
         }
 
-        statusCode = execvp(commands[0], commands);
-
-        if (statusCode != 0) {
-            exit(statusCode);
+        // If a redirect is present
+        if (redirect == true) {
+            dup2(file_descriptor, dup_value);
+            execvp(commands[0], commands);
+            close(file_descriptor);       
         }
 
-        // printf("Commands list command - %s\n", commands[0]);
-
-        // Call execute with command and the list of commands
-        printf("%s", commands[0]);
-        execvp(commands[0], commands);
-        close(file_descriptor);
-        redirect = false;
-        std = 2;
+        else {
+            execvp(commands[0], commands);
+        }
+    
+        dup_value = 2;
         counter -= 1;
         
 
