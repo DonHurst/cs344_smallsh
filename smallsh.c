@@ -261,6 +261,7 @@ void executeCommand(struct command *currCommand) {
 
     // If a redirect is present
     if (redirect == true) {
+        printf("Im in the redirect!");
         dup2(file_descriptor, dup_value);
         execvp(commands[0], commands);
         close(file_descriptor);       
