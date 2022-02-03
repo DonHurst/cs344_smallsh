@@ -232,7 +232,7 @@ void executeCommand(struct command *currCommand) {
             // Attempt to open the file
             file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
             // If it opens
-            if (file_descriptor) {
+            if (file_descriptor < 0) {
                 printf("\nFile opened!\n");
                 redirect = true;
                 std = 0;
