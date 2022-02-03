@@ -12,6 +12,12 @@
 #define MAX_LENGTH 2048
 #define MAX_ARGS 256
 
+// Function prototypes
+struct command *getCommand(); 
+void expand(struct command *currCommand, int pidnum);
+void executeCommand(struct command *currCommand);
+void otherCommands(struct command *currCommand);
+
 // Global Variables
 pid_t spawnpid = -5;
 int childExitMethod;
@@ -188,6 +194,9 @@ void executeCommand(struct command *currCommand) {
 
     char* token = strtok(currCommand->commandList, " ");
 
+    printf("\nCURRENT COMMAND INFORMATION -\n");
+    printf("inputFile - %s", currCommand->inputFile);
+
     while(token) {
         // Set first command in the list to the token & update counter
         commands[counter] = token;
@@ -291,10 +300,10 @@ void otherCommands(struct command *currCommand) {
 The handler functions below are adapted from the reading in the below:
 https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
 ********************************************************************************/
-void handle_SIGINT(int signo) {
-    printf("terminated by %d\n", signo);
-    fflush(stdout);
-}
+// void handle_SIGINT(int signo) {
+//     printf("terminated by %d\n", signo);
+//     fflush(stdout);
+// }
 
 /********************************************************************************
 The handler functions below are adapted from the reading in the below:
@@ -314,8 +323,8 @@ https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling
 int main() {
 
     // Sigint initialization
-    struct sigaction SIGINT_action = {0};
-    struct sigaction SIGTSTP_action = {0};
+    // struct sigaction SIGINT_action = {0};
+    // struct sigaction SIGTSTP_action = {0};
 
     
 
