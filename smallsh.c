@@ -371,6 +371,7 @@ int main() {
 
         printf("In main do loop!\n");
         fflush(stdin);
+        fflush(stdout);
 
 
         // Instantiate a new struct and get the input from the user
