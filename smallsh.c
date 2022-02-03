@@ -240,6 +240,7 @@ void executeCommand(struct command *currCommand) {
         }
         else {
             result = dup2(source_file_descriptor, 0);
+            fcntl(result, F_SETFD, FD_CLOEXEC);
         }
 
     }
@@ -255,6 +256,7 @@ void executeCommand(struct command *currCommand) {
         }
         else {
             result = dup2(target_file_descriptor, 1);
+            fcntl(result, F_SETFD, FD_CLOEXEC);
         }
         
     }
