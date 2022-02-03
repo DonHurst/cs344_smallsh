@@ -215,10 +215,8 @@ void executeCommand(struct command *currCommand) {
 
     while(token) {
         // Set first command in the list to the token & update counter
-
-        // printf("In while loop\n");
-        // printf("Token - %s\n", token);
         commands[counter] = token;
+
         // printf("Commands[counter] - %s", commands[counter]);
         counter += 1;
 
@@ -226,32 +224,23 @@ void executeCommand(struct command *currCommand) {
         token = strtok(NULL, " ");
     }
 
-    // while (counter >= 0) {
+    // The code for redirection was adapted from Benjamin Brewster's lecture 3.4
+    // https://www.youtube.com/watch?v=9Gsp-wucTNw&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=19
 
     // If there is an input file (< redirect was present)
     if (currCommand->inputFile != NULL) {
+        
         // Attempt to open the file
         source_file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
+       // If we cannot open the input file
         if (source_file_descriptor == -1) {
+            printf("Error opening the file - %s", currCommand->inputFile);
             perror("open()");
             exit(1);
         }
         else {
             result = dup2(source_file_descriptor, 0);
         }
-
-        // // If it opens
-        // if (source_file_descriptor < 0) {
-        //     printf("Cannot open %s input file\n", currCommand->inputFile);
-        //     fflush(stdout);
-        //     exit(1);
-        // }
-        // // If it cannot open the file
-        // else {
-        //     printf("\nFile opened!\n");
-        //     redirect = true;
-        //     dup_value = 0;
-        // }
 
     }
 
@@ -268,32 +257,11 @@ void executeCommand(struct command *currCommand) {
             result = dup2(target_file_descriptor, 1);
         }
         
-        // Flag redirect as true
-        // redirect = true;
-
-        // // Set value for dup2 function
-        // dup_value = 1;
     }
 
-
-
-    printf("\nThe dup value is - %d\n", dup_value);
-    // printf("\nThe bool value is - %d\n", redirect);
-    // If a redirect is present
-
-    // dup2(file_descriptor, dup_value);
     execvp(commands[0], commands);
 
-    // else {
-    //     printf("\n**Redirect not true**\n");
-    //     execvp(commands[0], commands);
-    // }
-
-    // dup_value = 2;
-    // counter -= 1;
-    
-printf("Finished in the execute command\n");
-fflush(stdout);
+    fflush(stdout);
 }
 
 // }
