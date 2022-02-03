@@ -268,7 +268,8 @@ void executeCommand(struct command *currCommand) {
         // printf("Commands list command - %s\n", commands[0]);
 
         // Call execute with command and the list of commands
-        execvp("ls", commands);
+        printf("%s", commands[0]);
+        execvp(commands[0], commands);
         close(file_descriptor);
         redirectIN = false;
         redirectOUT = false;
