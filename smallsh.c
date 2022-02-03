@@ -279,7 +279,8 @@ void otherCommands(struct command *currCommand) {
 
         // If the fork executed properly (Child)
         case 0:
-            printf("Successfully Entered Child");
+            printf("Successfully Entered Child\n");
+            printf("%s",currCommand->inputFile);
             executeCommand(currCommand);
             break;
 
