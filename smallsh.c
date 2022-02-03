@@ -193,16 +193,18 @@ void executeCommand(struct command *currCommand) {
     char* commands[MAX_ARGS];
     int counter = 0;
 
-    char* token = strtok(currCommand->commandList, " ");
-
     printf("\nCURRENT COMMAND INFORMATION -\n");
     // printf("Successfully Entered Parent\n");
     printf("--------------------------------------\n");
-    printf("Testing command prints in Parent\n");
+    printf("Testing command prints in executeCommand\n");
     printf("Commands - %s", currCommand->commandList);
     printf("\nInputFile - %s", currCommand->inputFile);
     printf("\noutPutFile - %s", currCommand->outputFile);
     printf("\n--------------------------------------\n");
+
+    char* token = strtok(currCommand->commandList, " ");
+
+
 
     while(token) {
         // Set first command in the list to the token & update counter
@@ -415,7 +417,7 @@ int main() {
 
             // If the token says status
             else if (strcmp(token, "status") == 0) {
-                // printf("Exit value %d\n", statusCode);
+                printf("Exit value %d\n", statusCode);
                 printf("In status");
                 fflush(stdout);
             }
