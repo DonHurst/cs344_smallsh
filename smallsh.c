@@ -237,7 +237,7 @@ void executeCommand(struct command *currCommand) {
                 redirect = true;
                 std = 0;
             }
-            // If it cannot open
+            // If it cannot open the file
             else {
                 printf("Cannot open %s input file\n", currCommand->inputFile);
                 fflush(stdout);
