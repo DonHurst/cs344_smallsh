@@ -262,7 +262,7 @@ void executeCommand(struct command *currCommand) {
     printf("\nThe dup value is - %d\n", dup_value);
     printf("\nThe bool value is - %d\n", redirect);
     // If a redirect is present
-    if (redirect == true) {
+    if (redirect > 0) {
         printf("Im in the redirect!");
         dup2(file_descriptor, dup_value);
         execvp(commands[0], commands);
