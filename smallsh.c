@@ -383,7 +383,7 @@ int main() {
         strcpy(commandString, newCommand->commandList);
 
         // Tokenize our commands
-        char* token = strtok(newCommand->commandList, " ");
+        char* token = strtok(commandString, " ");
         while (token) {
 
             // If the token says exit, mark indicator flag for exit
@@ -425,7 +425,7 @@ int main() {
 
                 printf("--------------------------------------\n");
                 printf("Testing command prints in main\n");
-                printf("Commands - %s", commandString);
+                printf("Commands - %s", newCommand->commandList);
                 printf("\nInputFile - %s", newCommand->inputFile);
                 printf("\noutPutFile - %s", newCommand->outputFile);
                 printf("\n--------------------------------------\n");
