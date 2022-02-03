@@ -213,9 +213,8 @@ void executeCommand(struct command *currCommand) {
         commands[counter] = token;
         counter += 1;
 
-        // Move to next token
-        strtok(NULL, " ");
-
+        // Advance to next command
+        token = strtok(NULL, " ");
     }
 
     while (counter >= 0) {
