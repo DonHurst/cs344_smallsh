@@ -213,9 +213,10 @@ void executeCommand(struct command *currCommand) {
     while(token) {
         // Set first command in the list to the token & update counter
 
-        printf("In while loop");
-        printf("Token - %s", token);
+        printf("In while loop\n");
+        printf("Token - %s\n", token);
         commands[counter] = token;
+        printf("Commands[counter] - %s", commands[counter]);
         counter += 1;
 
         // Advance to next command
