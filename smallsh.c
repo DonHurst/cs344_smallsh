@@ -76,6 +76,8 @@ struct command *getCommand() {
 		}
 	}
 
+    printf("\n ARGS - %s\n", args);
+
     // If the line is a comment, return Null
     if (args[0] == '#') {
         return NULL;
@@ -263,10 +265,10 @@ void executeCommand(struct command *currCommand) {
             result = dup2(file_descriptor, std);
         }
 
-        printf("Commands list command - %s\n", commands[0]);
+        // printf("Commands list command - %s\n", commands[0]);
 
         // Call execute with command and the list of commands
-        execvp(commands[1], commands);
+        execvp(commands[0], commands);
         close(file_descriptor);
         redirectIN = false;
         redirectOUT = false;
