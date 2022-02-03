@@ -317,7 +317,7 @@ int main() {
     struct sigaction SIGINT_action = {0};
     struct sigaction SIGTSTP_action = {0};
 
-    printf("In main!");
+    
 
 
 
@@ -327,6 +327,8 @@ int main() {
     char cwd[MAX_LENGTH];
 
     do {
+
+        printf("In main do loop!\n");
 
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
