@@ -262,9 +262,13 @@ void executeCommand(struct command *currCommand) {
 
 
     execvp(commands[0], commands);
-    close(source_file_descriptor);
-    close(source_file_descriptor);
 
+    if (currCommand->inputFile != NULL) {
+    close(source_file_descriptor);
+    }
+    if (currCommand->outputFile != NULL) {
+    close(source_file_descriptor);
+    }
 
     
 printf("Finished in the execute command\n");
