@@ -16,7 +16,7 @@
 struct command *getCommand(); 
 void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
-void otherCommands(struct command *currCommand);
+void createFork(struct command *currCommand);
 
 // Global Variables
 pid_t spawnpid = -5;
@@ -190,10 +190,12 @@ void executeCommand(struct command *currCommand) {
 
     // Set variable for file descriptor
     int file_descriptor;
-    bool redirect = false;
+    bool redirectIN = false;
+    bool redirectOUT = false;
     int std = 2;
     char* commands[MAX_ARGS];
     int counter = 0;
+    int result;
 
     printf("\nCURRENT COMMAND INFORMATION -\n");
     // printf("Successfully Entered Parent\n");
@@ -227,7 +229,7 @@ void executeCommand(struct command *currCommand) {
             file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
             // IF it opens
             if (file_descriptor) {
-                redirect = true;
+                redirectIN = true;
                 std = 0;
             }
             // If it cannot open
@@ -241,9 +243,9 @@ void executeCommand(struct command *currCommand) {
 
         // If there is an output file (> redirect was present)
         else if (currCommand->outputFile != NULL) {
-            file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0);
+            file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
             if (file_descriptor) {
-                redirect = true;
+                redirectOUT = true;
                 std = 1;
             }
             // If it cannot open
@@ -252,15 +254,21 @@ void executeCommand(struct command *currCommand) {
             }
         }
 
-        if (redirect == true) {
-            dup2(file_descriptor, std);
+        if (redirectIN == true) {
+            result = dup2(file_descriptor, std);
             
+        }
+        else if (redirectOUT == true) {
+            result = dup2(file_descriptor, std);
         }
 
         printf("Commands list command - %s\n", commands[0]);
+
+        // Call execute with command and the list of commands
         execvp(commands[0], commands);
         close(file_descriptor);
-        redirect = false;
+        redirectIN = false;
+        redirectOUT = false;
         std = 2;
         counter -= 1;
         
@@ -274,7 +282,7 @@ void executeCommand(struct command *currCommand) {
 
 
 ********************************************************************************/
-void otherCommands(struct command *currCommand) {
+void createFork(struct command *currCommand) {
 
     // The fork code below is adapted directly from the example code in our explorations
     // Found here: https://replit.com/@cs344/4forkexamplec#main.c
@@ -438,7 +446,7 @@ int main() {
                 printf("\nInputFile - %s", newCommand->inputFile);
                 printf("\noutPutFile - %s", newCommand->outputFile);
                 printf("\n--------------------------------------\n");
-                otherCommands(newCommand);
+                createFork(newCommand);
 
             }
 
