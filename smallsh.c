@@ -391,6 +391,10 @@ int main() {
 
             // If it's any other command
             else {
+
+                printf("TEsting command prints\n");
+                printf("Commands - %s", newCommand->commandList);
+                printf("\nInputFile - %s", newCommand->inputFile);
                 otherCommands(newCommand);
 
             }
