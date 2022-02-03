@@ -370,6 +370,8 @@ int main() {
     do {
 
         printf("In main do loop!\n");
+        fflush(stdin);
+
 
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
