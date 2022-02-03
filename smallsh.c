@@ -282,7 +282,7 @@ void otherCommands(struct command *currCommand) {
         case 0:
             printf("Successfully Entered Child\n");
             printf("--------------------------------------\n");
-            printf("Testing command prints in main\n");
+            printf("Testing command prints in child\n");
             printf("Commands - %s", currCommand->commandList);
             printf("\nInputFile - %s", currCommand->inputFile);
             printf("\noutPutFile - %s", currCommand->outputFile);
@@ -297,7 +297,7 @@ void otherCommands(struct command *currCommand) {
 
             printf("Successfully Entered Parent\n");
             printf("--------------------------------------\n");
-            printf("Testing command prints in main\n");
+            printf("Testing command prints in Parent\n");
             printf("Commands - %s", currCommand->commandList);
             printf("\nInputFile - %s", currCommand->inputFile);
             printf("\noutPutFile - %s", currCommand->outputFile);
