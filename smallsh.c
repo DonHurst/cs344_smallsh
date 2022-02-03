@@ -458,7 +458,7 @@ int main() {
             token = strtok(NULL, " ");
         }
 
-        exitStatus = 1;
+        // exitStatus = 1;
 
     }while (exitStatus != 1);
 }
