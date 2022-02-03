@@ -196,7 +196,13 @@ void executeCommand(struct command *currCommand) {
     char* token = strtok(currCommand->commandList, " ");
 
     printf("\nCURRENT COMMAND INFORMATION -\n");
-    printf("inputFile - %s", currCommand->inputFile);
+    // printf("Successfully Entered Parent\n");
+    printf("--------------------------------------\n");
+    printf("Testing command prints in Parent\n");
+    printf("Commands - %s", currCommand->commandList);
+    printf("\nInputFile - %s", currCommand->inputFile);
+    printf("\noutPutFile - %s", currCommand->outputFile);
+    printf("\n--------------------------------------\n");
 
     while(token) {
         // Set first command in the list to the token & update counter
@@ -280,13 +286,13 @@ void otherCommands(struct command *currCommand) {
 
         // If the fork executed properly (Child)
         case 0:
-            printf("Successfully Entered Child\n");
-            printf("--------------------------------------\n");
-            printf("Testing command prints in child\n");
-            printf("Commands - %s", currCommand->commandList);
-            printf("\nInputFile - %s", currCommand->inputFile);
-            printf("\noutPutFile - %s", currCommand->outputFile);
-            printf("\n--------------------------------------\n");
+            // printf("Successfully Entered Child\n");
+            // printf("--------------------------------------\n");
+            // printf("Testing command prints in child\n");
+            // printf("Commands - %s", currCommand->commandList);
+            // printf("\nInputFile - %s", currCommand->inputFile);
+            // printf("\noutPutFile - %s", currCommand->outputFile);
+            // printf("\n--------------------------------------\n");
             executeCommand(currCommand);
             break;
 
@@ -295,13 +301,13 @@ void otherCommands(struct command *currCommand) {
             // Parent waits for child process to finish first
             waitpid(spawnpid, &childStatus, 0);
 
-            printf("Successfully Entered Parent\n");
-            printf("--------------------------------------\n");
-            printf("Testing command prints in Parent\n");
-            printf("Commands - %s", currCommand->commandList);
-            printf("\nInputFile - %s", currCommand->inputFile);
-            printf("\noutPutFile - %s", currCommand->outputFile);
-            printf("\n--------------------------------------\n");
+            // printf("Successfully Entered Parent\n");
+            // printf("--------------------------------------\n");
+            // printf("Testing command prints in Parent\n");
+            // printf("Commands - %s", currCommand->commandList);
+            // printf("\nInputFile - %s", currCommand->inputFile);
+            // printf("\noutPutFile - %s", currCommand->outputFile);
+            // printf("\n--------------------------------------\n");
             // If child exited normally
             if(WIFEXITED(childStatus)) {
                 // Set status code to the return value from the child with WEXITSTATUS
