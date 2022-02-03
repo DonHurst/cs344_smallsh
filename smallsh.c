@@ -178,7 +178,7 @@ void expand(struct command *currCommand, int pidnum) {
     // Copy the newly created string commands to the structure
     strcpy(currCommand->commandList, newString);
 
-    // printf("\nRight here - %s\n", currCommand->commandList);
+    printf("\nRight here - %s\n", currCommand->commandList);
 
     // printf("The New String - %s", newString);
 
