@@ -247,7 +247,7 @@ void executeCommand(struct command *currCommand) {
     }
 
     // If there is an output file (> redirect was present)
-    else if (currCommand->outputFile != NULL) {
+    if (currCommand->outputFile != NULL) {
         
         // Open or create output file
         file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
