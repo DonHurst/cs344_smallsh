@@ -367,6 +367,7 @@ int main() {
     // Set a variable for the exit status
     int exitStatus = 0;
     char cwd[MAX_LENGTH];
+    struct command *newCommand; 
 
     do {
 
@@ -376,7 +377,7 @@ int main() {
 
 
         // Instantiate a new struct and get the input from the user
-        struct command *newCommand = getCommand();
+        newCommand = getCommand();
 
 
         // If the command is NULL (a # was entered), go to next line
