@@ -20,7 +20,8 @@ void otherCommands(struct command *currCommand);
 
 // Global Variables
 pid_t spawnpid = -5;
-int childExitMethod;
+int childStatus;
+int statusCode;
 
 
 /********************************************************************************
@@ -286,8 +287,14 @@ void otherCommands(struct command *currCommand) {
 
         // IF we are in the parent
         default:
-            waitpid(spawnpid, &childExitMethod, 0);
-            printf("Now in parent");
+            // Parent waits for child process to finish first
+            waitpid(spawnpid, &childStatus, 0);
+
+            // If child exited normally
+            if(WIFEXITED(childStatus)) {
+                // Set status code to the return value from the child with WEXITSTATUS
+                statusCode = WEXITSTATUS(childStatus);
+            }
             break;
 
     }
