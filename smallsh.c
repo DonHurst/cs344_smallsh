@@ -45,6 +45,9 @@ struct command *getCommand() {
     // command [arg1 arg2 ...] [< input_file] [> output_file] [&]    
 
     // Allocate memory for the command
+
+    fflush(stdin);
+    fflush(stdout);
     struct command *currCommand = malloc(sizeof(struct command));  
     currCommand->commandList = malloc(sizeof(char) * MAX_LENGTH);
 
