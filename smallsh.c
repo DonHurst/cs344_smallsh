@@ -66,7 +66,6 @@ struct command *getCommand() {
     size_t length = 2048;
     
     // Get actual input from the user
-    getchar();
     getline(&args, &length, stdin);
 
     // Remove newline
@@ -446,6 +445,8 @@ int main() {
             // Advance to next command
             token = strtok(NULL, " ");
         }
+
+        exitStatus = 1;
 
     }while (exitStatus != 1);
 }
