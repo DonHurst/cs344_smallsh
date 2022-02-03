@@ -281,7 +281,12 @@ void otherCommands(struct command *currCommand) {
         // If the fork executed properly (Child)
         case 0:
             printf("Successfully Entered Child\n");
-            printf("%s",currCommand->inputFile);
+            printf("--------------------------------------\n");
+            printf("Testing command prints in main\n");
+            printf("Commands - %s", currCommand->commandList);
+            printf("\nInputFile - %s", currCommand->inputFile);
+            printf("\noutPutFile - %s", currCommand->outputFile);
+            printf("\n--------------------------------------\n");
             executeCommand(currCommand);
             break;
 
@@ -291,6 +296,12 @@ void otherCommands(struct command *currCommand) {
             waitpid(spawnpid, &childStatus, 0);
 
             printf("Successfully Entered Parent\n");
+            printf("--------------------------------------\n");
+            printf("Testing command prints in main\n");
+            printf("Commands - %s", currCommand->commandList);
+            printf("\nInputFile - %s", currCommand->inputFile);
+            printf("\noutPutFile - %s", currCommand->outputFile);
+            printf("\n--------------------------------------\n");
             // If child exited normally
             if(WIFEXITED(childStatus)) {
                 // Set status code to the return value from the child with WEXITSTATUS
@@ -405,7 +416,7 @@ int main() {
                 printf("Commands - %s", newCommand->commandList);
                 printf("\nInputFile - %s", newCommand->inputFile);
                 printf("\noutPutFile - %s", newCommand->outputFile);
-                printf("--------------------------------------\n");
+                printf("\n--------------------------------------\n");
                 otherCommands(newCommand);
 
             }
