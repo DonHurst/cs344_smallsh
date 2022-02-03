@@ -196,7 +196,8 @@ void executeCommand(struct command *currCommand) {
     bool redirectOUT = false;
     int std = 2;
     char* commands[MAX_ARGS];
-    int counter = 0;
+    int iterator = 0;
+    int command_counter = 0;
     int result;
 
     printf("\nCURRENT COMMAND INFORMATION -\n");
@@ -208,24 +209,27 @@ void executeCommand(struct command *currCommand) {
     printf("\noutPutFile - %s", currCommand->outputFile);
     printf("\n--------------------------------------\n");
 
+    // Create token for all the commands in the list of commands
     char* token = strtok(currCommand->commandList, " ");
 
 
-
+    // Step through all tokens
     while(token) {
         // Set first command in the list to the token & update counter
 
         printf("In while loop\n");
         printf("Token - %s\n", token);
-        commands[counter] = token;
-        printf("Commands[counter] - %s", commands[counter]);
-        counter += 1;
+        // Append the current command to the commands list
+        commands[command_counter] = token;
+        printf("Commands[counter] - %s", commands[command_counter]);
+        // Increment the counter for the number of commands
+        command_counter += 1;
 
         // Advance to next command
         token = strtok(NULL, " ");
     }
 
-    while (counter >= 0) {
+    while (iterator != command_counter) {
 
         // If there is an input file (< redirect was present)
         if (currCommand->inputFile != NULL) {
@@ -274,7 +278,7 @@ void executeCommand(struct command *currCommand) {
         redirectIN = false;
         redirectOUT = false;
         std = 2;
-        counter -= 1;
+        iterator += 1;
         
 
     }
