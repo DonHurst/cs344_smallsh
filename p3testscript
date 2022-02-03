@@ -51,7 +51,7 @@ echo
 echo --------------------
 echo badfile (10 points for returning text error)
 badfile
-echo
+echols 
 echo
 echo --------------------
 echo sleep 100 background (10 points for returning process ID of sleeper)

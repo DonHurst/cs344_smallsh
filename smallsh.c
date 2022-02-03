@@ -250,7 +250,7 @@ void executeCommand(struct command *currCommand) {
     if (currCommand->outputFile != NULL) {
         
         // Open or create output file
-        file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
+        file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY | O_TRUNC, 0640);
         
         // Flag redirect as true
         redirect = true;
@@ -259,6 +259,7 @@ void executeCommand(struct command *currCommand) {
         dup_value = 1;
     }
 
+    printf("\nThe dup value is - %d\n", dup_value);
     // If a redirect is present
     if (redirect == true) {
         printf("Im in the redirect!");
