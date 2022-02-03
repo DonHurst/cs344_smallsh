@@ -192,8 +192,7 @@ void executeCommand(struct command *currCommand) {
 
     // Set variable for file descriptor
     int file_descriptor;
-    bool redirectIN = false;
-    bool redirectOUT = false;
+    bool redirect = false;
     int std = 2;
     char* commands[MAX_ARGS];
     int counter = 0;
@@ -216,10 +215,10 @@ void executeCommand(struct command *currCommand) {
     while(token) {
         // Set first command in the list to the token & update counter
 
-        printf("In while loop\n");
-        printf("Token - %s\n", token);
+        // printf("In while loop\n");
+        // printf("Token - %s\n", token);
         commands[counter] = token;
-        printf("Commands[counter] - %s", commands[counter]);
+        // printf("Commands[counter] - %s", commands[counter]);
         counter += 1;
 
         // Advance to next command
@@ -230,10 +229,12 @@ void executeCommand(struct command *currCommand) {
 
         // If there is an input file (< redirect was present)
         if (currCommand->inputFile != NULL) {
+            // Attempt to open the file
             file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
-            // IF it opens
+            // If it opens
             if (file_descriptor) {
-                redirectIN = true;
+                printf("\nFile opened!\n");
+                redirect = true;
                 std = 0;
             }
             // If it cannot open
@@ -249,7 +250,7 @@ void executeCommand(struct command *currCommand) {
         else if (currCommand->outputFile != NULL) {
             file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
             if (file_descriptor) {
-                redirectOUT = true;
+                redirect = true;
                 std = 1;
             }
             // If it cannot open
@@ -258,12 +259,15 @@ void executeCommand(struct command *currCommand) {
             }
         }
 
-        if (redirectIN == true) {
+        if (redirect == true) {
             result = dup2(file_descriptor, std);
             
         }
-        else if (redirectOUT == true) {
-            result = dup2(file_descriptor, std);
+
+        statusCode = execvp(commands[0], commands);
+
+        if (statusCode != 0) {
+            exit(statusCode);
         }
 
         // printf("Commands list command - %s\n", commands[0]);
@@ -272,8 +276,7 @@ void executeCommand(struct command *currCommand) {
         printf("%s", commands[0]);
         execvp(commands[0], commands);
         close(file_descriptor);
-        redirectIN = false;
-        redirectOUT = false;
+        redirect = false;
         std = 2;
         counter -= 1;
         
@@ -338,7 +341,7 @@ void createFork(struct command *currCommand) {
 
     }
 
-    printf("Leaving now!");
+    printf("Leaving the fork process now!\n");
 
 }
 
