@@ -225,59 +225,59 @@ void executeCommand(struct command *currCommand) {
         token = strtok(NULL, " ");
     }
 
-    while (counter >= 0) {
+    // while (counter >= 0) {
 
-        // If there is an input file (< redirect was present)
-        if (currCommand->inputFile != NULL) {
-            // Attempt to open the file
-            file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
-            // If it opens
-            if (file_descriptor < 0) {
-                printf("Cannot open %s input file\n", currCommand->inputFile);
-                fflush(stdout);
-                exit(1);
-            }
-            // If it cannot open the file
-            else {
-                printf("\nFile opened!\n");
-                redirect = true;
-                dup_value = 0;
-            }
-
+    // If there is an input file (< redirect was present)
+    if (currCommand->inputFile != NULL) {
+        // Attempt to open the file
+        file_descriptor = open(currCommand->inputFile, O_RDONLY, 0);
+        // If it opens
+        if (file_descriptor < 0) {
+            printf("Cannot open %s input file\n", currCommand->inputFile);
+            fflush(stdout);
+            exit(1);
         }
-
-        // If there is an output file (> redirect was present)
-        else if (currCommand->outputFile != NULL) {
-            
-            // Open or create output file
-            file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
-            
-            // Flag redirect as true
-            redirect = true;
-
-            // Set value for dup2 function
-            dup_value = 1;
-        }
-
-        // If a redirect is present
-        if (redirect == true) {
-            dup2(file_descriptor, dup_value);
-            execvp(commands[0], commands);
-            close(file_descriptor);       
-        }
-
+        // If it cannot open the file
         else {
-            execvp(commands[0], commands);
+            printf("\nFile opened!\n");
+            redirect = true;
+            dup_value = 0;
         }
-    
-        dup_value = 2;
-        counter -= 1;
-        
 
     }
-    printf("Finished in the execute command\n");
-    fflush(stdout);
+
+    // If there is an output file (> redirect was present)
+    else if (currCommand->outputFile != NULL) {
+        
+        // Open or create output file
+        file_descriptor = open(currCommand->inputFile, O_CREAT | O_WRONLY, 0640);
+        
+        // Flag redirect as true
+        redirect = true;
+
+        // Set value for dup2 function
+        dup_value = 1;
+    }
+
+    // If a redirect is present
+    if (redirect == true) {
+        dup2(file_descriptor, dup_value);
+        execvp(commands[0], commands);
+        close(file_descriptor);       
+    }
+
+    else {
+        execvp(commands[0], commands);
+    }
+
+    dup_value = 2;
+    counter -= 1;
+    
+printf("Finished in the execute command\n");
+fflush(stdout);
 }
+
+// }
 
 /********************************************************************************
 
