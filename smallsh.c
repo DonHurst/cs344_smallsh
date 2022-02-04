@@ -224,8 +224,7 @@ void executeCommand(struct command *currCommand) {
         source_file_descriptor = open(currCommand->inputFile, O_RDONLY);
        // If we cannot open the input file
         if (source_file_descriptor == -1) {
-            printf("Error opening the file - %s", currCommand->inputFile);
-            perror("open()");
+            printf("Cannot open %s for input\n", currCommand->inputFile);
             exit(1);
         }
         else {
