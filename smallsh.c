@@ -458,12 +458,14 @@ int main() {
         if (builtIn != 1) {
             createFork(newCommand);
         }
+
         builtIn = 0;
-        free(newCommand);
 
         // exitStatus = 1;
 
     }while (exitStatus != 1);
+
+    exit(exitStatus);
 }
 
 
