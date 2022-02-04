@@ -180,12 +180,13 @@ void expand(struct command *currCommand, int pidnum) {
     // Copy the newly created string commands to the structure
     strcpy(currCommand->commandList, newString);
 
-    // printf("\nRight here - %s\n", currCommand->commandList);
-
-    // printf("The New String - %s", newString);
-
 }
 
+/********************************************************************************
+The execute command takes our structure as a parameter. It works by looping through
+the list of commands and copying them to a new array. It then checks for redirects
+before calling exec to run the command.
+********************************************************************************/
 void executeCommand(struct command *currCommand) {
 
     // Set variable for file descriptor
@@ -271,11 +272,10 @@ printf("Finished in the execute command\n");
 fflush(stdout);
 }
 
-// }
-
 /********************************************************************************
-
-
+The create fork command takes our structure as a parameter. It works by forking
+the process before executing the command  (calling execute command). Once the child
+process is complete, it executes the parent process.
 ********************************************************************************/
 void createFork(struct command *currCommand) {
 
