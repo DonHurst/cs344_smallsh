@@ -258,7 +258,7 @@ void executeCommand(struct command *currCommand) {
     }
 
     // Execute the command
-    if(statusCode = execvp(commands[0], commands) == -1) {
+    if((statusCode = execvp(commands[0], commands)) == -1) {
         // IF it cannot execute, print error
         perror(commands[0]);
         exit(statusCode);
@@ -299,6 +299,7 @@ void createFork(struct command *currCommand) {
         // If the fork executed properly (Child)
         case 0:
             // Execute the current command 
+            printf("The background pid is starting - %d\n", spawnpid);
             executeCommand(currCommand);
             break;
 
@@ -307,9 +308,9 @@ void createFork(struct command *currCommand) {
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
                 
-                printf("\nThe background pid is starting - %d\n", spawnpid);
+                
                 // Process returns immediately
-                waitpid(spawnpid, &childStatus, WNOHANG);
+                int state = waitpid(spawnpid, &childStatus, WNOHANG);
                 
                 fflush(stdout);
             }
@@ -322,6 +323,7 @@ void createFork(struct command *currCommand) {
                     statusCode = WEXITSTATUS(childStatus);
                 }
             }
+
 
             break;
     }
@@ -446,7 +448,7 @@ int main() {
 
     }while (exitStatus != 1);
 
-    return;
+    return 0;
 }
 
 
