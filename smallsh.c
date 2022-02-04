@@ -16,6 +16,7 @@ struct command *getCommand();
 void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
 void createFork(struct command *currCommand);
+void catchSIGTSTP(int signo);
 
 // Global Variables
 pid_t spawnpid = -5;
@@ -23,24 +24,12 @@ int childStatus;
 int statusCode;
 int processes[100];
 int numOfProcesses = 0;
+int backgroundProcessesAllowed = 0;
 
 // Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
 // https://www.youtube.com/watch?v=VwS3dx3uyiQ&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=18
-// Sigaction Structures
-// {
-//  void (*sa_handler)(int);
-//  sigset_t sa_mask; 
-//  int sa_flags;
-//  void (*sa_sigaction) (int, siginfo_t*, void*)
-// }
 struct sigaction SIGINT_action = {0};
 struct sigaction SIGTSTP_action = {0};
-
-
-
-
-
-
 
 /********************************************************************************
 The command structure holds the list of commands, input file, output file, and 
@@ -57,13 +46,9 @@ struct command {
 This function takes a command from the user and parses it to create tokens.
 It uses those tokens to populate a command (Struct) and return it.
 ********************************************************************************/
-struct command *getCommand() {
-
-    // The general syntax of a command line is:
-    // command [arg1 arg2 ...] [< input_file] [> output_file] [&]    
+struct command *getCommand() {  
 
     // Allocate memory for the command
-
     fflush(stdout);
     struct command *currCommand = malloc(sizeof(struct command));  
     currCommand->commandList = malloc(sizeof(char) * MAX_LENGTH);
@@ -139,8 +124,10 @@ struct command *getCommand() {
 }
 
 /********************************************************************************
-
-
+The expand function works by taking our command structure and the PID number.
+It copies the commands to a new string and tokenizes it before replacing any 
+instances of $$ with the passed in PID number before finally copying the 
+list of commands back to our structure
 ********************************************************************************/
 void expand(struct command *currCommand, int pidnum) {
 
@@ -183,20 +170,16 @@ void expand(struct command *currCommand, int pidnum) {
             // If not, just add the current character to our string
             else {
                 strncat(newString, &token[i], 1);
-            } 
-            
+            }         
         }
-
         // Concatenate an empty space to break up the commands
         strcat(newString, " ");
 
         // Advance to next command
         token = strtok(NULL, " ");
     }
-
     // Copy the newly created string commands to the structure
     strcpy(currCommand->commandList, newString);
-
 }
 
 /********************************************************************************
@@ -213,18 +196,10 @@ void executeCommand(struct command *currCommand) {
     int counter = 0;
     int result;
 
-    // printf("\nCURRENT COMMAND INFORMATION -\n");
-    // printf("Successfully Entered Parent\n");
-    // printf("--------------------------------------\n");
-    // printf("Testing command prints in executeCommand\n");
-    // printf("Commands - %s", currCommand->commandList);
-    // printf("\nInputFile - %s", currCommand->inputFile);
-    // printf("\noutPutFile - %s", currCommand->outputFile);
-    // printf("\n--------------------------------------\n");
-
     // Create token for all the commands in the list of commands
     char* token = strtok(currCommand->commandList, " ");
 
+    // While there are still commands to process
     while(token) {
         // Set first command in the list to the token & update counter
         commands[counter] = token;
@@ -251,7 +226,7 @@ void executeCommand(struct command *currCommand) {
         if (source_file_descriptor == -1) {
             printf("Error opening the file - %s", currCommand->inputFile);
             perror("open()");
-            exit(1);
+            statusCode = 1;
         }
         else {
             result = dup2(source_file_descriptor, 0);
@@ -267,7 +242,7 @@ void executeCommand(struct command *currCommand) {
         target_file_descriptor = open(currCommand->outputFile, O_CREAT | O_WRONLY | O_TRUNC, 0640);
         if (target_file_descriptor == -1) {
             perror("open()");
-            exit(1);
+            statusCode = 1;
         }
         else {
             result = dup2(target_file_descriptor, 1);
@@ -324,21 +299,12 @@ void createFork(struct command *currCommand) {
 
         // If the fork executed properly (Child)
         case 0:
-            // printf("Successfully Entered Child\n");
-            // printf("--------------------------------------\n");
-            // printf("Testing command prints in child\n");
-            // printf("Commands - %s", currCommand->commandList);
-            // printf("\nInputFile - %s", currCommand->inputFile);
-            // printf("\noutPutFile - %s", currCommand->outputFile);
-            // printf("\n--------------------------------------\n");
-
             // Execute the current command 
             executeCommand(currCommand);
             break;
 
         // IF we are in the parent
         default:
-
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
                 
@@ -367,13 +333,10 @@ void createFork(struct command *currCommand) {
 The handler functions below are adapted from the reading in the below:
 https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
 ********************************************************************************/
-// void handle_SIGTSTP(int signo) {
-//     if() {
+// void catchSIGTSTP(int signo) {
+//     char* message;
 
-//     }
-//     else {
 
-//     }
 
 // }
 
@@ -391,11 +354,18 @@ int main() {
     SIGINT_action.sa_flags = 0;
     // Register the SIGINT functionality
     sigaction(SIGINT, &SIGINT_action, NULL);
-    
 
+    // //              SIGTSTP
+    // //Set the sa handler to our catch function
+    // SIGTSTP_action.sa_handler = catchSIGTSTP; 
+    // //
+    // sigfillset(&SIGTSTP_action.sa_mask);
+    // SIGTSTP_action.sa_flags = SA_RESTART;
+    // // Register the SIGTSTP functionality
+    // sigaction(SIGTSTP, &SIGTSTP_action, NULL);
+    
     // Set a variable for the exit status
     int exitStatus = 0;
-    char cwd[MAX_LENGTH];
     int builtIn = 0;
 
     do {
