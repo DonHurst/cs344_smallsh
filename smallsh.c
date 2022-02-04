@@ -363,11 +363,6 @@ int main() {
     // struct sigaction SIGINT_action = {0};
     // struct sigaction SIGTSTP_action = {0};
 
-    
-
-
-
-
     // Set a variable for the exit status
     int exitStatus = 0;
     char cwd[MAX_LENGTH];
@@ -376,8 +371,6 @@ int main() {
     do {
 
         printf("In main do loop!\n");
-        fflush(stdin);
-        fflush(stdout);
 
 
         // Instantiate a new struct and get the input from the user
