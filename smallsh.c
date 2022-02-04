@@ -459,6 +459,7 @@ int main() {
             createFork(newCommand);
         }
         builtIn = 0;
+        free(currCommand);
 
         // exitStatus = 1;
 
