@@ -23,9 +23,9 @@ pid_t spawnpid = -5;
 int childStatus;
 int statusCode;
 int processes[100];
-// int backgroundProcesses[100];
+int backgroundProcesses[100];
 int numOfProcesses = 0;
-// int numOfBackgroundProcesses = 0;
+int numOfBackgroundProcesses = 0;
 int backgroundProcessesAllowed = 0;
 
 // Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
@@ -309,8 +309,8 @@ void createFork(struct command *currCommand) {
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
 
-                // backgroundProcesses[numOfBackgroundProcesses] = spawnpid;  
-                // numOfBackgroundProcesses += 1;
+                backgroundProcesses[numOfBackgroundProcesses] = spawnpid;  
+                numOfBackgroundProcesses += 1;
                 
                 // Process returns immediately
                 int state = waitpid(spawnpid, &childStatus, WNOHANG);
@@ -329,10 +329,6 @@ void createFork(struct command *currCommand) {
             break;
     }
 
-    while ((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
-        printf("background pid %d is done. Status %d\n", spawnpid, childStatus);
-        fflush(stdout);
-    }
 }
 
 
@@ -376,6 +372,17 @@ int main() {
     int builtIn = 0;
 
     do {
+
+        // For all background processes
+        for (int i = 0; i < numOfBackgroundProcesses; i++) {
+            if(waitpid(backgroundProcesses[i], &childStatus, WNOHANG > 0)) {
+                if (WIFSIGNALED(childStatus)) {
+                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], childStatus);
+                    
+                }
+
+            }
+        }
 
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
