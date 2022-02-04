@@ -381,6 +381,7 @@ int main() {
         // Expands any commands with $$
         expand(newCommand, getpid());
 
+        // Create new command string and copy contents of commands to it
         char commandString[MAX_ARGS]; 
         strcpy(commandString, newCommand->commandList);
 
@@ -432,19 +433,6 @@ int main() {
                 fflush(stdout);
             }
 
-            // If it's any other command
-            // else {
-
-            // printf("--------------------------------------\n");
-            // printf("Testing command prints in main\n");
-            // printf("Commands - %s", newCommand->commandList);
-            // printf("\nInputFile - %s", newCommand->inputFile);
-            // printf("\noutPutFile - %s", newCommand->outputFile);
-            // printf("\n--------------------------------------\n");
-                
-
-            // }
-
             // Advance to next command
             token = strtok(NULL, " ");
         }
@@ -456,11 +444,9 @@ int main() {
 
         builtIn = 0;
 
-        // exitStatus = 1;
-
     }while (exitStatus != 1);
 
-    exit(exitStatus);
+    return;
 }
 
 
