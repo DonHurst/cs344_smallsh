@@ -16,7 +16,6 @@ struct command *getCommand();
 void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
 void createFork(struct command *currCommand);
-void catchSIGINT(int signo);
 
 // Global Variables
 pid_t spawnpid = -5;
@@ -94,8 +93,6 @@ struct command *getCommand() {
 			break;
 		}
 	}
-
-    // printf("\n ARGS - %s\n", args);
 
     // If the line is a comment, return Null
     if (args[0] == '#') {
@@ -345,9 +342,10 @@ void createFork(struct command *currCommand) {
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
                 
+                printf("\nThe background pid is starting - %d\n", spawnpid);
                 // Process returns immediately
                 waitpid(spawnpid, &childStatus, WNOHANG);
-                printf("\nThe background pid is done - %d\n", spawnpid);
+                
                 fflush(stdout);
             }
 
@@ -362,21 +360,7 @@ void createFork(struct command *currCommand) {
 
             break;
     }
-
-    printf("Leaving the fork process now!\n");
-
 }
-
-/********************************************************************************
-The handler functions below are adapted from the reading in the below:
-https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
-********************************************************************************/
-void catchSIGINT(int signo) {
-    char* message = ("Caught SIGINT, %d", signo);
-    write(STDOUT_FILENO, message, 38);
-}
-
-
 
 
 /********************************************************************************
@@ -415,9 +399,6 @@ int main() {
     int builtIn = 0;
 
     do {
-
-        // printf("In main do loop!\n");
-
 
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
@@ -460,8 +441,6 @@ int main() {
             else if (strcmp(token, "cd") == 0) {
 
                 builtIn = 1;
-
-                printf("\nCurrent Dir (before change) is - %s",getcwd(cwd, sizeof(cwd)));
                 
                 // Advance to the next token
                 token = strtok(NULL, " ");
@@ -469,13 +448,11 @@ int main() {
                 // If there is no argument
                 if (token == NULL) {
                     chdir(getenv("HOME"));
-                    printf("\nCurrent Dir (after change w/ no args) is - %s",getcwd(cwd, sizeof(cwd)));
                 }
 
                 // If there is an argument
                 else {
                     chdir(token);
-                    printf("\nCurrent Dir (after change w/ args) is - %s",getcwd(cwd, sizeof(cwd)));
                 }
             }
 
@@ -483,7 +460,6 @@ int main() {
             else if (strcmp(token, "status") == 0) {
                 builtIn = 1;
                 printf("Exit value: %d\n", statusCode);
-                // printf("In status");
                 fflush(stdout);
             }
 
