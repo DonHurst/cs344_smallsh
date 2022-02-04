@@ -23,7 +23,9 @@ pid_t spawnpid = -5;
 int childStatus;
 int statusCode;
 int processes[100];
+// int backgroundProcesses[100];
 int numOfProcesses = 0;
+// int numOfBackgroundProcesses = 0;
 int backgroundProcessesAllowed = 0;
 
 // Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
@@ -306,7 +308,9 @@ void createFork(struct command *currCommand) {
         default:
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
-                
+
+                // backgroundProcesses[numOfBackgroundProcesses] = spawnpid;  
+                // numOfBackgroundProcesses += 1;
                 
                 // Process returns immediately
                 int state = waitpid(spawnpid, &childStatus, WNOHANG);
@@ -322,9 +326,12 @@ void createFork(struct command *currCommand) {
                     statusCode = WEXITSTATUS(childStatus);
                 }
             }
-
-
             break;
+    }
+
+    while ((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
+        printf("background pid %d is done\n", spawnpid);
+        fflush(stdout);
     }
 }
 
