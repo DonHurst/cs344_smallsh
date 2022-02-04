@@ -198,14 +198,14 @@ void executeCommand(struct command *currCommand) {
     int counter = 0;
     int result;
 
-    // printf("\nCURRENT COMMAND INFORMATION -\n");
-    // printf("Successfully Entered Parent\n");
-    // printf("--------------------------------------\n");
-    // printf("Testing command prints in executeCommand\n");
-    // printf("Commands - %s", currCommand->commandList);
-    // printf("\nInputFile - %s", currCommand->inputFile);
-    // printf("\noutPutFile - %s", currCommand->outputFile);
-    // printf("\n--------------------------------------\n");
+    printf("\nCURRENT COMMAND INFORMATION -\n");
+    printf("Successfully Entered Parent\n");
+    printf("--------------------------------------\n");
+    printf("Testing command prints in executeCommand\n");
+    printf("Commands - %s", currCommand->commandList);
+    printf("\nInputFile - %s", currCommand->inputFile);
+    printf("\noutPutFile - %s", currCommand->outputFile);
+    printf("\n--------------------------------------\n");
 
     // Create token for all the commands in the list of commands
     char* token = strtok(currCommand->commandList, " ");
