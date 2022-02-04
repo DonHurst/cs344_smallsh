@@ -226,7 +226,7 @@ void executeCommand(struct command *currCommand) {
         if (source_file_descriptor == -1) {
             printf("Error opening the file - %s", currCommand->inputFile);
             perror("open()");
-            statusCode = 1;
+            exit(1);
         }
         else {
             result = dup2(source_file_descriptor, 0);
@@ -242,7 +242,7 @@ void executeCommand(struct command *currCommand) {
         target_file_descriptor = open(currCommand->outputFile, O_CREAT | O_WRONLY | O_TRUNC, 0640);
         if (target_file_descriptor == -1) {
             perror("open()");
-            statusCode = 1;
+            exit(1);
         }
         else {
             result = dup2(target_file_descriptor, 1);
