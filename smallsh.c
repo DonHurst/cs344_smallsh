@@ -298,8 +298,7 @@ void createFork(struct command *currCommand) {
 
         // If the fork executed properly (Child)
         case 0:
-            // Execute the current command 
-            printf("The background pid is starting - %d\n", spawnpid);
+            // Execute the current command   
             executeCommand(currCommand);
             break;
 
@@ -311,7 +310,7 @@ void createFork(struct command *currCommand) {
                 
                 // Process returns immediately
                 int state = waitpid(spawnpid, &childStatus, WNOHANG);
-                
+                printf("The background pid is starting - %d\n", spawnpid);
                 fflush(stdout);
             }
 
