@@ -342,24 +342,19 @@ void createFork(struct command *currCommand) {
         // IF we are in the parent
         default:
 
-
-            // Parent waits for child process to finish first
-            waitpid(spawnpid, &childStatus, 0);
-
-            // printf("Successfully Entered Parent\n");
-            // printf("--------------------------------------\n");
-            // printf("Testing command prints in Parent\n");
-            // printf("Commands - %s", currCommand->commandList);
-            // printf("\nInputFile - %s", currCommand->inputFile);
-            // printf("\noutPutFile - %s", currCommand->outputFile);
-            // printf("\n--------------------------------------\n");
-            // If child exited normally
-            if(WIFEXITED(childStatus)) {
-                // Set status code to the return value from the child with WEXITSTATUS
-                statusCode = WEXITSTATUS(childStatus);
+            // If the process is a background command
+            if(currCommand->backgroundStatus == 1) {
+                // Process returns immediately
+                waitpid(spawnpid, &childStatus, WNOHANG);
+                fflush(stdout);
             }
-            break;
 
+
+            else {
+                waitpid(spawnpid, &childStatus, 0);
+            }
+
+            break;
     }
 
     printf("Leaving the fork process now!\n");
