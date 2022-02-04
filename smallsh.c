@@ -287,10 +287,10 @@ void executeCommand(struct command *currCommand) {
     }
 
     // Execute the command
-    if(execvp(commands[0], commands) == -1) {
+    if(statusCode = execvp(commands[0], commands) == -1) {
         // IF it cannot execute, print error
         perror(commands[0]);
-        exit(1);
+        exit(statusCode);
     }
     
     // Flush the std out buffer
@@ -351,7 +351,11 @@ void createFork(struct command *currCommand) {
 
 
             else {
+                // Wait for child process to finish
                 waitpid(spawnpid, &childStatus, 0);
+                if (WIFEXITED(childStatus)) {
+                    statusCode = WEXITSTATUS(childStatus);
+                }
             }
 
             break;
@@ -476,8 +480,8 @@ int main() {
             // If the token says status
             else if (strcmp(token, "status") == 0) {
                 builtIn = 1;
-                printf("Exit value %d\n", statusCode);
-                printf("In status");
+                printf("Exit value: %d\n", statusCode);
+                // printf("In status");
                 fflush(stdout);
             }
 
