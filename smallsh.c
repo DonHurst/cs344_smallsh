@@ -371,6 +371,7 @@ int main() {
     // Set a variable for the exit status
     int exitStatus = 0;
     char cwd[MAX_LENGTH];
+    int builtIn = 0;
 
     do {
 
@@ -400,12 +401,15 @@ int main() {
 
             // If the token says exit, mark indicator flag for exit
             if (strcmp(token, "exit") == 0) {
+                builtIn = 1; 
                 exitStatus = 1;
                 break;
             }
 
             // If the token says cd
             else if (strcmp(token, "cd") == 0) {
+
+                builtIn = 1;
 
                 printf("\nCurrent Dir (before change) is - %s",getcwd(cwd, sizeof(cwd)));
                 
@@ -427,6 +431,7 @@ int main() {
 
             // If the token says status
             else if (strcmp(token, "status") == 0) {
+                builtIn = 1;
                 printf("Exit value %d\n", statusCode);
                 printf("In status");
                 fflush(stdout);
@@ -448,7 +453,12 @@ int main() {
             // Advance to next command
             token = strtok(NULL, " ");
         }
-        createFork(newCommand);
+        // When we've processed all the commands (and found the command isn't built-in), 
+        // fork the process to execute the command
+        if (builtIn != 1) {
+            createFork(newCommand);
+        }
+        builtIn = 0;
 
         // exitStatus = 1;
 
