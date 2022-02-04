@@ -262,7 +262,10 @@ void executeCommand(struct command *currCommand) {
 
 
 
-    execvp(commands[0], commands);
+    if(execvp(commands[0], commands) == -1) {
+        perror(commands[0]);
+        exit(1);
+    }
     
     printf("Finished in the execute command\n");
     fflush(stdout);
