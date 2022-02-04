@@ -403,7 +403,7 @@ int main() {
             if (strcmp(token, "exit") == 0) {
                 // If there are no processes, set exit flag to 0
                 if (numOfProcesses == 0){
-                    exitStatus = 0;
+                    exit(0);
                 }
                 //If there are, kill them and set flag to 1
                 else {
@@ -411,7 +411,7 @@ int main() {
                     for(counter = 0; counter < numOfProcesses; counter++) {
                         kill(processes[counter], SIGTERM);
                     }
-                    exitStatus = 1;
+                    exit(1);
                 }
                 builtIn = 1; 
                 break;
