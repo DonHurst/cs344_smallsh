@@ -21,6 +21,8 @@ void createFork(struct command *currCommand);
 pid_t spawnpid = -5;
 int childStatus;
 int statusCode;
+int processes[100];
+int numOfProcesses = 0;
 
 
 /********************************************************************************
@@ -285,6 +287,11 @@ void createFork(struct command *currCommand) {
     // Fork the process to create a child process
     
     spawnpid = fork();
+
+    // Store the process id and increment process counter
+    processes[numOfProcesses] = spawnpid;
+    numOfProcesses += 1;
+
     printf("\nSpawned new PID!: %di\n", spawnpid);
 
     switch(spawnpid) {
@@ -394,6 +401,15 @@ int main() {
 
             // If the token says exit, mark indicator flag for exit
             if (strcmp(token, "exit") == 0) {
+                if (numOfProcesses == 0){
+                    exit(0);
+                }
+                else {
+                    int counter;
+                    for(counter = 0; counter < numOfProcesses; counter++) {
+                        kill(processes[counter], SIGTERM);
+                    }
+                }
                 builtIn = 1; 
                 exitStatus = 1;
                 break;
