@@ -401,17 +401,19 @@ int main() {
 
             // If the token says exit, mark indicator flag for exit
             if (strcmp(token, "exit") == 0) {
+                // If there are no processes, set exit flag to 0
                 if (numOfProcesses == 0){
-                    exit(0);
+                    exitStatus = 0;
                 }
+                //If there are, kill them and set flag to 1
                 else {
                     int counter;
                     for(counter = 0; counter < numOfProcesses; counter++) {
                         kill(processes[counter], SIGTERM);
                     }
+                    exitStatus = 1;
                 }
                 builtIn = 1; 
-                exitStatus = 1;
                 break;
             }
 
