@@ -344,8 +344,10 @@ void createFork(struct command *currCommand) {
 
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
+                
                 // Process returns immediately
                 waitpid(spawnpid, &childStatus, WNOHANG);
+                printf("\nThe background pid is done - %d\n", spawnpid);
                 fflush(stdout);
             }
 
