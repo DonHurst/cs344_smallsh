@@ -7,7 +7,6 @@
 #include <string.h>
 #include <signal.h>
 #include <fcntl.h>
-#include <stdbool.h>
 
 #define MAX_LENGTH 2048
 #define MAX_ARGS 256
@@ -167,8 +166,7 @@ void expand(struct command *currCommand, int pidnum) {
             // If not, just add the current character to our string
             else {
                 strncat(newString, &token[i], 1);
-            }
-            
+            } 
             
         }
 
@@ -182,7 +180,7 @@ void expand(struct command *currCommand, int pidnum) {
     // Copy the newly created string commands to the structure
     strcpy(currCommand->commandList, newString);
 
-    printf("\nRight here - %s\n", currCommand->commandList);
+    // printf("\nRight here - %s\n", currCommand->commandList);
 
     // printf("The New String - %s", newString);
 
@@ -193,20 +191,18 @@ void executeCommand(struct command *currCommand) {
     // Set variable for file descriptor
     int target_file_descriptor;
     int source_file_descriptor;
-    bool redirect = false;
-    int dup_value = 2;
     char* commands[MAX_ARGS];
     int counter = 0;
     int result;
 
-    printf("\nCURRENT COMMAND INFORMATION -\n");
+    // printf("\nCURRENT COMMAND INFORMATION -\n");
     // printf("Successfully Entered Parent\n");
-    printf("--------------------------------------\n");
-    printf("Testing command prints in executeCommand\n");
-    printf("Commands - %s", currCommand->commandList);
-    printf("\nInputFile - %s", currCommand->inputFile);
-    printf("\noutPutFile - %s", currCommand->outputFile);
-    printf("\n--------------------------------------\n");
+    // printf("--------------------------------------\n");
+    // printf("Testing command prints in executeCommand\n");
+    // printf("Commands - %s", currCommand->commandList);
+    // printf("\nInputFile - %s", currCommand->inputFile);
+    // printf("\noutPutFile - %s", currCommand->outputFile);
+    // printf("\n--------------------------------------\n");
 
     // Create token for all the commands in the list of commands
     char* token = strtok(currCommand->commandList, " ");
