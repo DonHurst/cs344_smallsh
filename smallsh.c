@@ -222,6 +222,7 @@ void executeCommand(struct command *currCommand) {
         // Advance to next command
         token = strtok(NULL, " ");
     }
+    commands[counter] = NULL;
 
     // The code for redirection was adapted from Benjamin Brewster's lecture 3.4
     // https://www.youtube.com/watch?v=9Gsp-wucTNw&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=19
