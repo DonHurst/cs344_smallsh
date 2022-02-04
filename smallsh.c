@@ -375,10 +375,10 @@ int main() {
         for (int i = 0; i < numOfBackgroundProcesses; i++) {
             if(waitpid(backgroundProcesses[i], &childStatus, WNOHANG > 0)) {
                 if (WIFSIGNALED(childStatus)) {
-                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], childStatus);           
+                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], WTERMSIG(childStatus));           
                 }
                 if (WIFEXITED(childStatus)) {
-                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], childStatus);
+                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], WEXITSTATUS(childStatus));
                 }
 
             }
