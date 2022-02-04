@@ -433,17 +433,17 @@ int main() {
             }
 
             // If it's any other command
-            else {
+            // else {
 
-                // printf("--------------------------------------\n");
-                // printf("Testing command prints in main\n");
-                // printf("Commands - %s", newCommand->commandList);
-                // printf("\nInputFile - %s", newCommand->inputFile);
-                // printf("\noutPutFile - %s", newCommand->outputFile);
-                // printf("\n--------------------------------------\n");
+            //     // printf("--------------------------------------\n");
+            //     // printf("Testing command prints in main\n");
+            //     // printf("Commands - %s", newCommand->commandList);
+            //     // printf("\nInputFile - %s", newCommand->inputFile);
+            //     // printf("\noutPutFile - %s", newCommand->outputFile);
+            //     // printf("\n--------------------------------------\n");
                 
 
-            }
+            // }
 
             // Advance to next command
             token = strtok(NULL, " ");
