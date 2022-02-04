@@ -240,6 +240,7 @@ void executeCommand(struct command *currCommand) {
         else {
             result = dup2(source_file_descriptor, 0);
         }
+        close(source_file_descriptor);
 
     }
 
@@ -255,20 +256,13 @@ void executeCommand(struct command *currCommand) {
         else {
             result = dup2(target_file_descriptor, 1);
         }
+        close(target_file_descriptor);
         
     }
 
 
 
     execvp(commands[0], commands);
-
-    if (currCommand->inputFile != NULL) {
-    close(source_file_descriptor);
-    }
-    if (currCommand->outputFile != NULL) {
-    close(source_file_descriptor);
-    }
-
     
     printf("Finished in the execute command\n");
     fflush(stdout);
