@@ -16,6 +16,7 @@ struct command *getCommand();
 void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
 void createFork(struct command *currCommand);
+void catchSIGINT(int signo);
 
 // Global Variables
 pid_t spawnpid = -5;
@@ -23,6 +24,23 @@ int childStatus;
 int statusCode;
 int processes[100];
 int numOfProcesses = 0;
+
+// Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
+// https://www.youtube.com/watch?v=VwS3dx3uyiQ&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=18
+// Sigaction Structures
+// {
+//  void (*sa_handler)(int);
+//  sigset_t sa_mask; 
+//  int sa_flags;
+//  void (*sa_sigaction) (int, siginfo_t*, void*)
+// }
+struct sigaction SIGINT_action = {0};
+struct sigaction SIGTSTP_action = {0};
+
+
+
+
+
 
 
 /********************************************************************************
@@ -260,6 +278,14 @@ void executeCommand(struct command *currCommand) {
         close(target_file_descriptor);
         
     }
+
+    // IF this is a foreground process
+    if (currCommand->backgroundStatus == 0) {
+        // Set action to default functionality
+        SIGINT_action.sa_handler = SIG_DFL;
+        sigaction(SIGINT, &SIGINT_action, NULL);
+    }
+
     // Execute the command
     if(execvp(commands[0], commands) == -1) {
         // IF it cannot execute, print error
@@ -315,6 +341,8 @@ void createFork(struct command *currCommand) {
 
         // IF we are in the parent
         default:
+
+
             // Parent waits for child process to finish first
             waitpid(spawnpid, &childStatus, 0);
 
@@ -338,15 +366,17 @@ void createFork(struct command *currCommand) {
 
 }
 
-
 /********************************************************************************
 The handler functions below are adapted from the reading in the below:
 https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
 ********************************************************************************/
-// void handle_SIGINT(int signo) {
-//     printf("terminated by %d\n", signo);
-//     fflush(stdout);
-// }
+void catchSIGINT(int signo) {
+    char* message = ("Caught SIGINT, %d", signo);
+    write(STDOUT_FILENO, message, 38);
+}
+
+
+
 
 /********************************************************************************
 The handler functions below are adapted from the reading in the below:
@@ -365,9 +395,18 @@ https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling
 
 int main() {
 
-    // Sigint initialization
     // struct sigaction SIGINT_action = {0};
-    // struct sigaction SIGTSTP_action = {0};
+    // struct sigaction SIGSTP_action = {0};
+
+    //              SIGINT
+    // Ignore instances of SIGINT by default
+    SIGINT_action.sa_handler = SIG_IGN;
+    // Block signals while mask in place
+    sigfillset(&SIGINT_action.sa_mask);
+    SIGINT_action.sa_flags = 0;
+    // Register the SIGINT functionality
+    sigaction(SIGINT, &SIGINT_action, NULL);
+    
 
     // Set a variable for the exit status
     int exitStatus = 0;
