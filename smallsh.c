@@ -198,19 +198,17 @@ void executeCommand(struct command *currCommand) {
     int counter = 0;
     int result;
 
-    printf("\nCURRENT COMMAND INFORMATION -\n");
-    printf("Successfully Entered Parent\n");
-    printf("--------------------------------------\n");
-    printf("Testing command prints in executeCommand\n");
-    printf("Commands - %s", currCommand->commandList);
-    printf("\nInputFile - %s", currCommand->inputFile);
-    printf("\noutPutFile - %s", currCommand->outputFile);
-    printf("\n--------------------------------------\n");
+    // printf("\nCURRENT COMMAND INFORMATION -\n");
+    // printf("Successfully Entered Parent\n");
+    // printf("--------------------------------------\n");
+    // printf("Testing command prints in executeCommand\n");
+    // printf("Commands - %s", currCommand->commandList);
+    // printf("\nInputFile - %s", currCommand->inputFile);
+    // printf("\noutPutFile - %s", currCommand->outputFile);
+    // printf("\n--------------------------------------\n");
 
     // Create token for all the commands in the list of commands
     char* token = strtok(currCommand->commandList, " ");
-
-
 
     while(token) {
         // Set first command in the list to the token & update counter
@@ -222,6 +220,8 @@ void executeCommand(struct command *currCommand) {
         // Advance to next command
         token = strtok(NULL, " ");
     }
+
+    // Set the final index of commands to null
     commands[counter] = NULL;
 
     // The code for redirection was adapted from Benjamin Brewster's lecture 3.4
@@ -302,13 +302,13 @@ void createFork(struct command *currCommand) {
 
         // If the fork executed properly (Child)
         case 0:
-            printf("Successfully Entered Child\n");
-            printf("--------------------------------------\n");
-            printf("Testing command prints in child\n");
-            printf("Commands - %s", currCommand->commandList);
-            printf("\nInputFile - %s", currCommand->inputFile);
-            printf("\noutPutFile - %s", currCommand->outputFile);
-            printf("\n--------------------------------------\n");
+            // printf("Successfully Entered Child\n");
+            // printf("--------------------------------------\n");
+            // printf("Testing command prints in child\n");
+            // printf("Commands - %s", currCommand->commandList);
+            // printf("\nInputFile - %s", currCommand->inputFile);
+            // printf("\noutPutFile - %s", currCommand->outputFile);
+            // printf("\n--------------------------------------\n");
             executeCommand(currCommand);
             break;
 
@@ -317,13 +317,13 @@ void createFork(struct command *currCommand) {
             // Parent waits for child process to finish first
             waitpid(spawnpid, &childStatus, 0);
 
-            printf("Successfully Entered Parent\n");
-            printf("--------------------------------------\n");
-            printf("Testing command prints in Parent\n");
-            printf("Commands - %s", currCommand->commandList);
-            printf("\nInputFile - %s", currCommand->inputFile);
-            printf("\noutPutFile - %s", currCommand->outputFile);
-            printf("\n--------------------------------------\n");
+            // printf("Successfully Entered Parent\n");
+            // printf("--------------------------------------\n");
+            // printf("Testing command prints in Parent\n");
+            // printf("Commands - %s", currCommand->commandList);
+            // printf("\nInputFile - %s", currCommand->inputFile);
+            // printf("\noutPutFile - %s", currCommand->outputFile);
+            // printf("\n--------------------------------------\n");
             // If child exited normally
             if(WIFEXITED(childStatus)) {
                 // Set status code to the return value from the child with WEXITSTATUS
@@ -449,12 +449,12 @@ int main() {
             // If it's any other command
             // else {
 
-            printf("--------------------------------------\n");
-            printf("Testing command prints in main\n");
-            printf("Commands - %s", newCommand->commandList);
-            printf("\nInputFile - %s", newCommand->inputFile);
-            printf("\noutPutFile - %s", newCommand->outputFile);
-            printf("\n--------------------------------------\n");
+            // printf("--------------------------------------\n");
+            // printf("Testing command prints in main\n");
+            // printf("Commands - %s", newCommand->commandList);
+            // printf("\nInputFile - %s", newCommand->inputFile);
+            // printf("\noutPutFile - %s", newCommand->outputFile);
+            // printf("\n--------------------------------------\n");
                 
 
             // }
