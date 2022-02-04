@@ -288,8 +288,6 @@ void createFork(struct command *currCommand) {
     processes[numOfProcesses] = spawnpid;
     numOfProcesses += 1;
 
-    // printf("\nSpawned new PID!: %di\n", spawnpid);
-
     switch(spawnpid) {
         
         // If there is an error forking, print message and set exit status to 1
@@ -377,8 +375,10 @@ int main() {
         for (int i = 0; i < numOfBackgroundProcesses; i++) {
             if(waitpid(backgroundProcesses[i], &childStatus, WNOHANG > 0)) {
                 if (WIFSIGNALED(childStatus)) {
+                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], childStatus);           
+                }
+                if (WIFEXITED(childStatus)) {
                     printf("background PID %d is done: exit value %d", backgroundProcesses[i], childStatus);
-                    
                 }
 
             }
