@@ -260,15 +260,14 @@ void executeCommand(struct command *currCommand) {
         close(target_file_descriptor);
         
     }
-
-
-
+    // Execute the command
     if(execvp(commands[0], commands) == -1) {
+        // IF it cannot execute, print error
         perror(commands[0]);
         exit(1);
     }
     
-    printf("Finished in the execute command\n");
+    // Flush the std out buffer
     fflush(stdout);
 }
 
@@ -290,7 +289,7 @@ void createFork(struct command *currCommand) {
     processes[numOfProcesses] = spawnpid;
     numOfProcesses += 1;
 
-    printf("\nSpawned new PID!: %di\n", spawnpid);
+    // printf("\nSpawned new PID!: %di\n", spawnpid);
 
     switch(spawnpid) {
         
@@ -309,6 +308,8 @@ void createFork(struct command *currCommand) {
             // printf("\nInputFile - %s", currCommand->inputFile);
             // printf("\noutPutFile - %s", currCommand->outputFile);
             // printf("\n--------------------------------------\n");
+
+            // Execute the current command 
             executeCommand(currCommand);
             break;
 
@@ -375,7 +376,7 @@ int main() {
 
     do {
 
-        printf("In main do loop!\n");
+        // printf("In main do loop!\n");
 
 
         // Instantiate a new struct and get the input from the user
