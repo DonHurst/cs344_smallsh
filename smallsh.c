@@ -328,7 +328,7 @@ void createFork(struct command *currCommand) {
             }
             
         while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
-            printf("\nBackground pid %d is done: ", spawnpid);
+            printf("Background pid %d is done: ", spawnpid);
             if (WIFEXITED(childStatus)) {
 		        // If exited by status
 		        printf("exit value %d\n", WEXITSTATUS(childStatus));
