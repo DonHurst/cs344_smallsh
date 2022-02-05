@@ -9,7 +9,6 @@
 #include <fcntl.h>
 
 #define MAX_LENGTH 2048
-#define MAX_ARGS 256
 
 // Function prototypes
 struct command *getCommand(); 
@@ -137,8 +136,8 @@ void expand(struct command *currCommand, int pidnum) {
     // Variables to help with the expansion
     char temp;
     char nextTemp;
-    char newString[MAX_ARGS];
-    char pidString[MAX_ARGS];
+    char newString[MAX_LENGTH];
+    char pidString[MAX_LENGTH];
     int signsFound;
 
     // Create a string of the pid number for appending
@@ -195,7 +194,7 @@ void executeCommand(struct command *currCommand) {
     // Set variable for file descriptor
     int target_file_descriptor;
     int source_file_descriptor;
-    char* commands[MAX_ARGS];
+    char* commands[MAX_LENGTH];
     int counter = 0;
     int result;
 
@@ -319,7 +318,6 @@ void createFork(struct command *currCommand) {
 
 
             else {
-
                 waitpid(spawnpid, &childStatus, 0);
             }
             
@@ -420,7 +418,7 @@ int main() {
         expand(newCommand, getpid());
 
         // Create new command string and copy contents of commands to it
-        char commandString[MAX_ARGS]; 
+        char commandString[MAX_LENGTH]; 
         strcpy(commandString, newCommand->commandList);
 
         // Tokenize our commands
