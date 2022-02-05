@@ -23,10 +23,10 @@ pid_t spawnpid = -5;
 int childStatus;
 int statusCode;
 int processes[100];
-int backgroundProcesses[100];
+// int backgroundProcesses[100];
 int numOfProcesses = 0;
-int numOfBackgroundProcesses = 0;
-int backgroundProcessesAllowed = 0;
+// int numOfBackgroundProcesses = 0;
+// int backgroundProcessesAllowed = 0;
 
 // Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
 // https://www.youtube.com/watch?v=VwS3dx3uyiQ&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=18
@@ -307,29 +307,44 @@ void createFork(struct command *currCommand) {
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
 
-                backgroundProcesses[numOfBackgroundProcesses] = spawnpid;  
-                numOfBackgroundProcesses += 1;
+                // backgroundProcesses[numOfBackgroundProcesses] = spawnpid;  
+                // numOfBackgroundProcesses += 1;
                 
                 // Process returns immediately
-                int state = waitpid(spawnpid, &childStatus, WNOHANG);
+                waitpid(spawnpid, &childStatus, WNOHANG);
                 printf("The background pid is starting - %d\n", spawnpid);
                 fflush(stdout);
             }
 
 
             else {
-                // Wait for child process to finish
+
                 waitpid(spawnpid, &childStatus, 0);
-                if (WIFEXITED(childStatus)) {
-                    statusCode = WEXITSTATUS(childStatus);
-                }
+            //     // Wait for child process to finish
+            //     waitpid(spawnpid, &childStatus, 0);
+            //     if (WIFEXITED(childStatus)) {
+            //         statusCode = WEXITSTATUS(childStatus);
+            //     }
             }
-            break;
+            
+        while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
+            printf("Child %d termindated\n", spawnpid);
+            if (WIFEXITED(childStatus)) {
+		        // If exited by status
+		        printf("exit value %d\n", WEXITSTATUS(childStatus));
+	        } 
+            else {
+		        // If terminated by signal
+		        printf("terminated by signal %d\n", WTERMSIG(childStatus));
+	        }
+        }
     }
 
 }
 
-
+// void catchSIGINT(int signo) {
+//     char* message = "Terminated by signal"
+// }
 /********************************************************************************
 The handler functions below are adapted from the reading in the below:
 https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
@@ -371,18 +386,18 @@ int main() {
 
     do {
 
-        // For all background processes
-        for (int i = 0; i < numOfBackgroundProcesses; i++) {
-            if(waitpid(backgroundProcesses[i], &childStatus, WNOHANG > 0)) {
-                if (WIFSIGNALED(childStatus)) {
-                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], WTERMSIG(childStatus));           
-                }
-                if (WIFEXITED(childStatus)) {
-                    printf("background PID %d is done: exit value %d", backgroundProcesses[i], WEXITSTATUS(childStatus));
-                }
+        // // For all background processes
+        // for (int i = 0; i < numOfBackgroundProcesses; i++) {
+        //     if(waitpid(backgroundProcesses[i], &childStatus, WNOHANG > 0)) {
+        //         if (WIFSIGNALED(childStatus)) {
+        //             printf("background PID %d is done: exit value %d", backgroundProcesses[i], WTERMSIG(childStatus));           
+        //         }
+        //         if (WIFEXITED(childStatus)) {
+        //             printf("background PID %d is done: exit value %d", backgroundProcesses[i], WEXITSTATUS(childStatus));
+        //         }
 
-            }
-        }
+        //     }
+        // }
 
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
