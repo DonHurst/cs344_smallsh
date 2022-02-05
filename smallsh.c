@@ -319,6 +319,7 @@ void createFork(struct command *currCommand) {
 
 
             else {
+
                 waitpid(spawnpid, &childStatus, 0);
             }
             
@@ -429,7 +430,7 @@ int main() {
             int errorSignal = 0;
 
             // If the token says exit, mark indicator flag for exit
-            if (strcmp(token, "exit") == 0) {
+            if (strcmp(commandString[0], "exit") == 0) {
                 // If there are no processes, set exit flag to 0
                 if (numOfProcesses == 0){
                     exit(0);
@@ -447,7 +448,7 @@ int main() {
             }
 
             // If the token says cd
-            else if (strcmp(token, "cd") == 0) {
+            else if (strcmp(commandString[0], "cd") == 0) {
 
                 builtIn = 1;
                 
@@ -466,7 +467,7 @@ int main() {
             }
 
             // If the token says status
-            else if (strcmp(token, "status") == 0) {
+            else if (strcmp(commandString[0], "status") == 0) {
                 builtIn = 1;
 
                 getStatus(childStatus);
