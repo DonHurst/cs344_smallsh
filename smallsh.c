@@ -321,14 +321,9 @@ void createFork(struct command *currCommand) {
             else {
 
                 waitpid(spawnpid, &childStatus, 0);
-            //     // Wait for child process to finish
-            //     waitpid(spawnpid, &childStatus, 0);
-            //     if (WIFEXITED(childStatus)) {
-            //         statusCode = WEXITSTATUS(childStatus);
-            //     }
             }
             
-        while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
+        while((waitpid(-1, &childStatus, WNOHANG)) > 0) {
             printf("Background pid %d is done: ", spawnpid);
             getStatus(childStatus);
             fflush(stdout);
