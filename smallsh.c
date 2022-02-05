@@ -387,8 +387,8 @@ void catchSIGTSTP(int signo) {
     // If the SIGTSTP signal is not on (bg process allowed)
     if (SIGTSTP_on == false) {
         // Set message and write using non-reentrant function
-        char* msg = "Entering foreground-only mode (& is now ignored)";
-        write(1, msg, 49);
+        char* msg = "Entering foreground-only mode (& is now ignored)\n";
+        write(1, msg, 50);
 
         // Turn the SIGTSTP flag on (bg process not allowed)
         SIGTSTP_on = true;
@@ -398,8 +398,8 @@ void catchSIGTSTP(int signo) {
     // If the SIGTSTP signal is on (BG process not allowed)
     else {
         // Set message and write using non-reentrant function
-        char* msg = "Exiting foreground-only mode";
-        write(1, msg, 29);
+        char* msg = "Exiting foreground-only mode\n";
+        write(1, msg, 30);
 
         // Turn off the SIGTSTP flag (bg process allowed)
         SIGTSTP_on = false;
