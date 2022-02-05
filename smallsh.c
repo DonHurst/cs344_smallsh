@@ -338,6 +338,7 @@ void createFork(struct command *currCommand) {
 		        printf("exit value: %d\n", WTERMSIG(childStatus));
 	        }
         }
+        fflush(stdout);
     }
 
 }
