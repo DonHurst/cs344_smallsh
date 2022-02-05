@@ -7,6 +7,7 @@
 #include <string.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 // Constants for the max length and # of args respectively
 #define MAX_LENGTH 2048
@@ -25,21 +26,27 @@ void getStatus(int);
 spawnpid - pid for the forked process
 childStatus - for use with waitpid, holds the child's status
 processes/numof - array and counter for killing processes on exit 
+SIGTSTP_on - indicates if the SIGTSTP is activated (bg processes not allowed)
 ********************************************************************************/
 pid_t spawnpid = -5;
 int childStatus;
 int statusCode;
 int processes[100];
 int numOfProcesses = 0;
+bool SIGTSTP_on = false;
 
-// Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
-// https://www.youtube.com/watch?v=VwS3dx3uyiQ&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=18
+/********************************************************************************
+ *                      * sigaction Structures
+Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
+https://www.youtube.com/watch?v=VwS3dx3uyiQ&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=18
+********************************************************************************/
 struct sigaction SIGINT_action = {0};
 struct sigaction SIGTSTP_action = {0};
 
 /********************************************************************************
+ *                      * Command Structure *
 The command structure holds the list of commands, input file, output file, and 
-background status from the user
+background status from the user.
 ********************************************************************************/
 struct command {
     char* commandList;
@@ -49,6 +56,7 @@ struct command {
 };
 
 /********************************************************************************
+ *                          * getCommand *
 This function takes a command from the user and parses it to create tokens.
 It uses those tokens to populate a command (Struct) and return it. It has no 
 parameters and uses the getline function to get input from the user. The function
@@ -132,6 +140,7 @@ struct command *getCommand() {
 }
 
 /********************************************************************************
+ *                      *   expand function    *
 The expand function works by taking our command structure and the PID number.
 It copies the commands to a new string and tokenizes it before replacing any 
 instances of $$ with the passed in PID number before finally copying the 
@@ -191,6 +200,7 @@ void expand(struct command *currCommand, int pidnum) {
 }
 
 /********************************************************************************
+ *                          *   execute function    *
 The execute command takes our structure as a parameter. It works by looping through
 the list of commands and copying them to a new array. It then checks for redirects
 before calling exec to run the command.
@@ -281,9 +291,12 @@ void executeCommand(struct command *currCommand) {
 }
 
 /********************************************************************************
+ *                          *   createFork function    *
 The create fork command takes our structure as a parameter. It works by forking
-the process before executing the command  (calling execute command). Once the child
-process is complete, it executes the parent process.
+the process before executing the command  (calling execute command). The parent
+process will wait/not wait based on the background status flag in our struct.
+finally, the parent process will reap any background children when they are 
+done
 ********************************************************************************/
 void createFork(struct command *currCommand) {
 
@@ -314,7 +327,7 @@ void createFork(struct command *currCommand) {
         // If we are in the parent
         default:
             // If the process is a background command
-            if(currCommand->backgroundStatus == 1) {
+            if(currCommand->backgroundStatus == 1 && SIGTSTP_on == false) {
                 // Process returns immediately and prints the pid
                 waitpid(spawnpid, &childStatus, WNOHANG);
                 printf("The background pid is starting - %d\n", spawnpid);
@@ -343,8 +356,10 @@ void createFork(struct command *currCommand) {
 }
 
 /********************************************************************************
+ *                      *  getStatus function   *
 The getStatus function takes only an int representing the child's status as an
-argument and returns nothing. It simply checks and prints the exit status
+argument and returns nothing. It simply checks and prints the exit status.
+Adapted/referenced from: https://www.geeksforgeeks.org/exit-status-child-process-linux/
 ********************************************************************************/
 void getStatus(int childStatus) {
     
@@ -356,6 +371,39 @@ void getStatus(int childStatus) {
     else {
         // If exited via signal
         printf("exit value: %d\n", WTERMSIG(childStatus));
+    }
+
+}
+
+/********************************************************************************
+ *                      *  catchSIGTSTP function   *
+ * 
+ * 
+Adapted from Benjamin Brewster 3.3 - Signals video:
+https://www.youtube.com/watch?v=VwS3dx3uyiQ
+********************************************************************************/
+void catchSIGTSTP(int signo) {
+
+    // If the SIGTSTP signal is not on (bg process allowed)
+    if (SIGTSTP_on == false) {
+        // Set message and write using non-reentrant function
+        char* msg = "Entering foreground-only mode (& is now ignored)";
+        write(1, msg, 49);
+
+        // Turn the SIGTSTP flag on (bg process not allowed)
+        SIGTSTP_on = true;
+
+    }
+
+    // If the SIGTSTP signal is on (BG process not allowed)
+    else {
+        // Set message and write using non-reentrant function
+        char* msg = "Exiting foreground-only mode";
+        write(1, msg, 29);
+
+        // Turn off the SIGTSTP flag (bg process allowed)
+        SIGTSTP_on = false;
+
     }
 
 }
@@ -372,14 +420,14 @@ int main() {
     // Register the SIGINT functionality
     sigaction(SIGINT, &SIGINT_action, NULL);
 
-    // //              SIGTSTP
-    // //Set the sa handler to our catch function
-    // SIGTSTP_action.sa_handler = catchSIGTSTP; 
-    // //
-    // sigfillset(&SIGTSTP_action.sa_mask);
-    // SIGTSTP_action.sa_flags = SA_RESTART;
-    // // Register the SIGTSTP functionality
-    // sigaction(SIGTSTP, &SIGTSTP_action, NULL);
+    //              SIGTSTP
+    //Set the sa handler to our catch function
+    SIGTSTP_action.sa_handler = catchSIGTSTP; 
+    // Block signals while mask in place
+    sigfillset(&SIGTSTP_action.sa_mask);
+    SIGTSTP_action.sa_flags = SA_RESTART;
+    // Register the SIGTSTP functionality
+    sigaction(SIGTSTP, &SIGTSTP_action, NULL);
     
     // Set a variable for the exit status
     int exitStatus = 0;
