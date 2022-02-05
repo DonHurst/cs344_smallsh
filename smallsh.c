@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <fcntl.h>
 
+// Constants for the max length and # of args respectively
 #define MAX_LENGTH 2048
 #define MAX_ARGS 256
 
@@ -19,15 +20,17 @@ void createFork(struct command *currCommand);
 void catchSIGTSTP(int signo);
 void getStatus(int);
 
-// Global Variables
+/********************************************************************************
+                        * Global Variables *
+spawnpid - pid for the forked process
+childStatus - for use with waitpid, holds the child's status
+processes/numof - array and counter for killing processes on exit 
+********************************************************************************/
 pid_t spawnpid = -5;
 int childStatus;
 int statusCode;
 int processes[100];
-// int backgroundProcesses[100];
 int numOfProcesses = 0;
-// int numOfBackgroundProcesses = 0;
-// int backgroundProcessesAllowed = 0;
 
 // Sigaction struct info came directly from Benjamin Brewsters 3.3 signals video:
 // https://www.youtube.com/watch?v=VwS3dx3uyiQ&list=PL0VYt36OaaJll8G0-0xrqaJW60I-5RXdW&index=18
@@ -47,7 +50,9 @@ struct command {
 
 /********************************************************************************
 This function takes a command from the user and parses it to create tokens.
-It uses those tokens to populate a command (Struct) and return it.
+It uses those tokens to populate a command (Struct) and return it. It has no 
+parameters and uses the getline function to get input from the user. The function
+is built to identify redirect values or comment values.
 ********************************************************************************/
 struct command *getCommand() {  
 
@@ -197,13 +202,13 @@ void executeCommand(struct command *currCommand) {
     int source_file_descriptor;
     char* commands[MAX_ARGS];
     int counter = 0;
-    int result;
 
     // Create token for all the commands in the list of commands
     char* token = strtok(currCommand->commandList, " ");
 
     // While there are still commands to process
     while(token) {
+
         // Set first command in the list to the token & update counter
         commands[counter] = token;
 
@@ -231,8 +236,10 @@ void executeCommand(struct command *currCommand) {
             exit(1);
         }
         else {
-            result = dup2(source_file_descriptor, 0);
+            // redirect the input to be from the indicated file
+            dup2(source_file_descriptor, 0);
         }
+        // Close the file descriptor
         close(source_file_descriptor);
 
     }
@@ -247,15 +254,17 @@ void executeCommand(struct command *currCommand) {
             exit(1);
         }
         else {
-            result = dup2(target_file_descriptor, 1);
+            // redirect the output to be sent to the target file
+            dup2(target_file_descriptor, 1);
         }
+        // Close the file descriptor
         close(target_file_descriptor);
         
     }
 
     // IF this is a foreground process
     if (currCommand->backgroundStatus == 0) {
-        // Set action to default functionality
+        // Set action to default functionality (closes on ctrl+c)
         SIGINT_action.sa_handler = SIG_DFL;
         sigaction(SIGINT, &SIGINT_action, NULL);
     }
@@ -282,7 +291,6 @@ void createFork(struct command *currCommand) {
     // Found here: https://replit.com/@cs344/4forkexamplec#main.c
 
     // Fork the process to create a child process
-    
     spawnpid = fork();
 
     // Store the process id and increment process counter
@@ -303,26 +311,26 @@ void createFork(struct command *currCommand) {
             executeCommand(currCommand);
             break;
 
-        // IF we are in the parent
+        // If we are in the parent
         default:
             // If the process is a background command
             if(currCommand->backgroundStatus == 1) {
-
-                // backgroundProcesses[numOfBackgroundProcesses] = spawnpid;  
-                // numOfBackgroundProcesses += 1;
-                
-                // Process returns immediately
+                // Process returns immediately and prints the pid
                 waitpid(spawnpid, &childStatus, WNOHANG);
                 printf("The background pid is starting - %d\n", spawnpid);
                 fflush(stdout);
             }
 
-
+            // If it is a foreground process
             else {
-
+                // Process runs and parent waits for it to finish
                 waitpid(spawnpid, &childStatus, 0);
             }
             
+        // This loop was adapted from stack overflow:
+        // https://stackoverflow.com/questions/45809535/why-does-waitpid-in-a-signal-handler-need-to-loop
+        
+        // Reap the background child processes when they are done
         while((waitpid(-1, &childStatus, WNOHANG)) > 0) {
             printf("Background pid %d is done: ", spawnpid);
             getStatus(childStatus);
@@ -334,31 +342,19 @@ void createFork(struct command *currCommand) {
 
 }
 
-// void catchSIGINT(int signo) {
-//     char* message = "Terminated by signal"
-// }
 /********************************************************************************
-The handler functions below are adapted from the reading in the below:
-https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling-api?module_item_id=21835981
+The getStatus function takes only an int representing the child's status as an
+argument and returns nothing. It simply checks and prints the exit status
 ********************************************************************************/
-// void catchSIGTSTP(int signo) {
-//     char* message;
-
-
-
-// }
-
-/*
-
-*/
 void getStatus(int childStatus) {
     
+    // Check the child's termination status
     if (WIFEXITED(childStatus)) {
-        // If exited by status
+        // If it exited normally
         printf("exit value %d\n", WEXITSTATUS(childStatus));
     } 
     else {
-        // If terminated by signal
+        // If exited via signal
         printf("exit value: %d\n", WTERMSIG(childStatus));
     }
 
@@ -366,9 +362,6 @@ void getStatus(int childStatus) {
 
 
 int main() {
-
-    // struct sigaction SIGINT_action = {0};
-    // struct sigaction SIGSTP_action = {0};
 
     //              SIGINT
     // Ignore instances of SIGINT by default
@@ -394,8 +387,9 @@ int main() {
 
     do {
 
-
+        // Instantiate a token to check if this is the first command in the list
         int firstToken = 0;
+        
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
 
@@ -416,7 +410,6 @@ int main() {
         char* token = strtok(commandString, " ");
         while (token) {
 
-            int errorSignal = 0;
 
             // If the token says exit, mark indicator flag for exit
             if ((strcmp(token, "exit") == 0) && firstToken == 0) {
