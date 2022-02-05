@@ -290,8 +290,6 @@ void createFork(struct command *currCommand) {
     // The fork code below is adapted directly from the example code in our explorations
     // Found here: https://replit.com/@cs344/4forkexamplec#main.c
 
-    spawnpid = -5;
-
     // Fork the process to create a child process
     spawnpid = fork();
 
@@ -333,7 +331,7 @@ void createFork(struct command *currCommand) {
         // https://stackoverflow.com/questions/45809535/why-does-waitpid-in-a-signal-handler-need-to-loop
         
         // Reap the background child processes when they are done
-        while((waitpid(-1, &childStatus, WNOHANG)) > 0) {
+        while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
             printf("Background pid %d is done: ", spawnpid);
             getStatus(childStatus);
             fflush(stdout);
@@ -391,7 +389,7 @@ int main() {
 
         // Instantiate a token to check if this is the first command in the list
         int firstToken = 0;
-
+        
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
 
