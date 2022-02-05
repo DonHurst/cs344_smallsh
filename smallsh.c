@@ -394,19 +394,8 @@ int main() {
 
     do {
 
-        // // For all background processes
-        // for (int i = 0; i < numOfBackgroundProcesses; i++) {
-        //     if(waitpid(backgroundProcesses[i], &childStatus, WNOHANG > 0)) {
-        //         if (WIFSIGNALED(childStatus)) {
-        //             printf("background PID %d is done: exit value %d", backgroundProcesses[i], WTERMSIG(childStatus));           
-        //         }
-        //         if (WIFEXITED(childStatus)) {
-        //             printf("background PID %d is done: exit value %d", backgroundProcesses[i], WEXITSTATUS(childStatus));
-        //         }
 
-        //     }
-        // }
-
+        int firstToken = 0;
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
 
@@ -430,7 +419,7 @@ int main() {
             int errorSignal = 0;
 
             // If the token says exit, mark indicator flag for exit
-            if (strcmp(commandString[0], "exit") == 0) {
+            if ((strcmp(token, "exit") == 0) && firstToken == 0) {
                 // If there are no processes, set exit flag to 0
                 if (numOfProcesses == 0){
                     exit(0);
@@ -448,7 +437,7 @@ int main() {
             }
 
             // If the token says cd
-            else if (strcmp(commandString[0], "cd") == 0) {
+            else if ((strcmp(token, "cd") == 0) && firstToken == 0) {
 
                 builtIn = 1;
                 
@@ -467,7 +456,7 @@ int main() {
             }
 
             // If the token says status
-            else if (strcmp(commandString[0], "status") == 0) {
+            else if ((strcmp(token, "status" == 0) && firstToken == 0) == 0) {
                 builtIn = 1;
 
                 getStatus(childStatus);
@@ -479,6 +468,7 @@ int main() {
 
             // Advance to next command
             token = strtok(NULL, " ");
+            firstToken += 1;
         }
         // When we've processed all the commands (and found the command isn't built-in), 
         // fork the process to execute the command
