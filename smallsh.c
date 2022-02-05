@@ -17,7 +17,7 @@ void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
 void createFork(struct command *currCommand);
 void catchSIGTSTP(int signo);
-void status(int* errorsig);
+void getStatus(int);
 
 // Global Variables
 pid_t spawnpid = -5;
@@ -330,14 +330,7 @@ void createFork(struct command *currCommand) {
             
         while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
             printf("Background pid %d is done: ", spawnpid);
-            if (WIFEXITED(childStatus)) {
-		        // If exited by status
-		        printf("exit value %d\n", WEXITSTATUS(childStatus));
-	        } 
-            else {
-		        // If terminated by signal
-		        printf("exit value: %d\n", WTERMSIG(childStatus));
-	        }
+            
         }
         fflush(stdout);
     }
@@ -357,6 +350,22 @@ https://canvas.oregonstate.edu/courses/1884946/pages/exploration-signal-handling
 
 
 // }
+
+/*
+
+*/
+void getStatus(int childStatus) {
+    
+    if (WIFEXITED(childStatus)) {
+        // If exited by status
+        printf("exit value %d\n", WEXITSTATUS(childStatus));
+    } 
+    else {
+        // If terminated by signal
+        printf("exit value: %d\n", WTERMSIG(childStatus));
+    }
+
+}
 
 
 int main() {
@@ -463,32 +472,9 @@ int main() {
             // If the token says status
             else if (strcmp(token, "status") == 0) {
                 builtIn = 1;
-                int errVal = 0;
-                int sigHold = 0;
-                int exitValue;
 
-                waitpid(getpid(), &childStatus, 0);
-
-                if (WIFEXITED(childStatus)) {
-                    errVal = WEXITSTATUS(childStatus);
-                }
-
-                if (WIFSIGNALED(childStatus)) {
-                    sigHold = WTERMSIG(childStatus);
-                }
-
-                exitValue = errVal + sigHold == 0 ? 0 : 1;
-
-                if(sigHold == 0) {
-                    printf("exit value %d\n", exitValue);
-                }
-                else {
-                    errorSignal = 1;
-                    printf("Terminated by signal %d\n", sigHold);
-                }
+                getStatus(childStatus);
                 fflush(stdout);
-
-
 
                 // printf("Exit value: %d\n", statusCode);
                 // fflush(stdout);
