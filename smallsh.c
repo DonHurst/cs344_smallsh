@@ -330,6 +330,8 @@ void createFork(struct command *currCommand) {
             
         while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
             printf("Background pid %d is done: ", spawnpid);
+            getStatus(childStatus);
+            fflush(stdout);
             
         }
         fflush(stdout);
