@@ -1,5 +1,4 @@
 #include <sys/types.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -377,8 +376,9 @@ void getStatus(int childStatus) {
 
 /********************************************************************************
  *                      *  catchSIGTSTP function   *
- * 
- * 
+ Upon receiving a SIGTSTP signal, this function *switches* the mode by setting
+ the SIGTSTP flag to it's opposite (true or false) and printing a message to let
+ the user know which mode is currently active
 Adapted from Benjamin Brewster 3.3 - Signals video:
 https://www.youtube.com/watch?v=VwS3dx3uyiQ
 ********************************************************************************/
@@ -414,22 +414,26 @@ int main() {
     //              SIGINT
     // Ignore instances of SIGINT by default
     SIGINT_action.sa_handler = SIG_IGN;
+
     // Block signals while mask in place
     sigfillset(&SIGINT_action.sa_mask);
     SIGINT_action.sa_flags = 0;
+
     // Register the SIGINT functionality
     sigaction(SIGINT, &SIGINT_action, NULL);
 
     //              SIGTSTP
     //Set the sa handler to our catch function
     SIGTSTP_action.sa_handler = catchSIGTSTP; 
+
     // Block signals while mask in place
     sigfillset(&SIGTSTP_action.sa_mask);
     SIGTSTP_action.sa_flags = SA_RESTART;
+
     // Register the SIGTSTP functionality
     sigaction(SIGTSTP, &SIGTSTP_action, NULL);
     
-    // Set a variable for the exit status
+    // Set a variable for the exit status and built-ins
     int exitStatus = 0;
     int builtIn = 0;
 
@@ -467,8 +471,7 @@ int main() {
                 }
                 //If there are, kill them and set flag to 1
                 else {
-                    int counter;
-                    for(counter = 0; counter < numOfProcesses; counter++) {
+                    for(int counter = 0; counter < numOfProcesses; counter++) {
                         kill(processes[counter], SIGTERM);
                     }
                     exit(1);
@@ -502,9 +505,6 @@ int main() {
 
                 getStatus(childStatus);
                 fflush(stdout);
-
-                // printf("Exit value: %d\n", statusCode);
-                // fflush(stdout);
             }
 
             // Advance to next command
