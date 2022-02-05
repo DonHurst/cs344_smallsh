@@ -290,6 +290,8 @@ void createFork(struct command *currCommand) {
     // The fork code below is adapted directly from the example code in our explorations
     // Found here: https://replit.com/@cs344/4forkexamplec#main.c
 
+    spawnpid = -5;
+
     // Fork the process to create a child process
     spawnpid = fork();
 
@@ -389,7 +391,7 @@ int main() {
 
         // Instantiate a token to check if this is the first command in the list
         int firstToken = 0;
-        
+
         // Instantiate a new struct and get the input from the user
         struct command *newCommand = getCommand();
 
