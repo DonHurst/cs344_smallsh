@@ -456,7 +456,7 @@ int main() {
             }
 
             // If the token says status
-            else if ((strcmp(token, "status" == 0) && firstToken == 0) == 0) {
+            else if ((strcmp(token, "status") == 0) && firstToken == 0) {
                 builtIn = 1;
 
                 getStatus(childStatus);
