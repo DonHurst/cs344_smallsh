@@ -18,12 +18,13 @@ void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
 void createFork(struct command *currCommand);
 void catchSIGTSTP(int signo);
-void getStatus(int);
+// void getStatus(int);
 
 /********************************************************************************
                         * Global Variables *
 spawnpid - pid for the forked process
 childStatus - for use with waitpid, holds the child's status
+statusCode - Holds the value returned by exec() call
 processes/numof - array and counter for killing processes on exit 
 SIGTSTP_on - indicates if the SIGTSTP is activated (bg processes not allowed)
 ********************************************************************************/
@@ -345,11 +346,18 @@ void createFork(struct command *currCommand) {
         // Reap the background child processes when they are done
         while((spawnpid = waitpid(-1, &childStatus, WNOHANG)) > 0) {
             printf("Background pid %d is done: ", spawnpid);
-            getStatus(childStatus);
+            // Check the child's termination status
+            if (WIFEXITED(childStatus)) {
+                // If it exited normally
+                printf("exit value %d\n", WEXITSTATUS(childStatus));
+            } 
+            else {
+                // If exited via signal
+                printf("exit value: %d\n", WTERMSIG(childStatus));
+            }
             fflush(stdout);
             
         }
-        fflush(stdout);
     }
 
 }
@@ -360,19 +368,19 @@ The getStatus function takes only an int representing the child's status as an
 argument and returns nothing. It simply checks and prints the exit status.
 Adapted/referenced from: https://www.geeksforgeeks.org/exit-status-child-process-linux/
 ********************************************************************************/
-void getStatus(int childStatus) {
+// void getStatus(int childStatus) {
     
-    // Check the child's termination status
-    if (WIFEXITED(childStatus)) {
-        // If it exited normally
-        printf("exit value %d\n", WEXITSTATUS(childStatus));
-    } 
-    else {
-        // If exited via signal
-        printf("exit value: %d\n", WTERMSIG(childStatus));
-    }
+//     // Check the child's termination status
+//     if (WIFEXITED(childStatus)) {
+//         // If it exited normally
+//         printf("exit value %d\n", WEXITSTATUS(childStatus));
+//     } 
+//     else {
+//         // If exited via signal
+//         printf("exit value: %d\n", WTERMSIG(childStatus));
+//     }
 
-}
+// }
 
 /********************************************************************************
  *                      *  catchSIGTSTP function   *
@@ -503,7 +511,15 @@ int main() {
             else if ((strcmp(token, "status") == 0) && firstToken == 0) {
                 builtIn = 1;
 
-                getStatus(childStatus);
+                // Check the child's termination status
+                if (WIFEXITED(childStatus)) {
+                    // If it exited normally
+                    printf("exit value %d\n", WEXITSTATUS(childStatus));
+                } 
+                else {
+                    // If exited via signal
+                    printf("exit value: %d\n", WTERMSIG(childStatus));
+                }
                 fflush(stdout);
             }
 
