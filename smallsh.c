@@ -18,7 +18,6 @@ void expand(struct command *currCommand, int pidnum);
 void executeCommand(struct command *currCommand);
 void createFork(struct command *currCommand);
 void catchSIGTSTP(int signo);
-// void getStatus(int);
 
 /********************************************************************************
                         * Global Variables *
@@ -361,26 +360,6 @@ void createFork(struct command *currCommand) {
     }
 
 }
-
-/********************************************************************************
- *                      *  getStatus function   *
-The getStatus function takes only an int representing the child's status as an
-argument and returns nothing. It simply checks and prints the exit status.
-Adapted/referenced from: https://www.geeksforgeeks.org/exit-status-child-process-linux/
-********************************************************************************/
-// void getStatus(int childStatus) {
-    
-//     // Check the child's termination status
-//     if (WIFEXITED(childStatus)) {
-//         // If it exited normally
-//         printf("exit value %d\n", WEXITSTATUS(childStatus));
-//     } 
-//     else {
-//         // If exited via signal
-//         printf("exit value: %d\n", WTERMSIG(childStatus));
-//     }
-
-// }
 
 /********************************************************************************
  *                      *  catchSIGTSTP function   *
